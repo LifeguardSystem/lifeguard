@@ -1,0 +1,8 @@
+#!/bin/sh
+
+lifeguard-server &
+PID_OF_SERVER=$!
+
+lifeguard-scheduler
+
+kill $PID_OF_SERVER && echo "killed"
