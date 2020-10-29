@@ -6,10 +6,19 @@ import traceback
 
 sys.path.append(".")
 
+from lifeguard import load_validations, VALIDATIONS
 from lifeguard.logger import lifeguard_logger as logger
 
 
 def start_scheduler():
+
+    for validation in VALIDATIONS:
+        if "every" in VALIDATIONS[validation]["schedule"]:
+            if "minutes" in VALIDATIONS[validation]["schedule"]["every"]:
+                schedule.every(
+                    VALIDATIONS[validation]["schedule"]["every"]["minutes"]
+                ).minutes.do(validation)
+
     while True:
         time.sleep(1)
         try:
@@ -23,4 +32,5 @@ def start_scheduler():
 
 
 if __name__ == "__main__":
+    load_validations()
     start_scheduler()
