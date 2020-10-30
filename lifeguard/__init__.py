@@ -1,5 +1,5 @@
 """
-Lifeguard health utils
+Lifeguard validation core
 """
 
 import os
@@ -21,9 +21,9 @@ ACTION_STATUSES = [NORMAL, WARNING, PROBLEM]
 VALIDATIONS = {}
 
 
-class HealthResponse:
-    def __init__(self, health, status, details, settings=None):
-        self.health = health
+class ValidationResponse:
+    def __init__(self, validation_name, status, details, settings=None):
+        self.validation_name = validation_name
         self.status = status
         self.details = details
         self.settings = settings
@@ -31,7 +31,7 @@ class HealthResponse:
     def __str__(self):
         return str(
             {
-                "health": self.health,
+                "validation_name": self.validation_name,
                 "status": self.status,
                 "details": self.details,
                 "settings": self.settings,
@@ -65,7 +65,8 @@ def validation(description=None, actions=None, schedule=None):
 
     def function_reference(decorated):
 
-        VALIDATIONS[decorated] = {
+        VALIDATIONS[decorated.__name__] = {
+            "ref": decorated,
             "description": description,
             "actions": actions,
             "schedule": schedule,

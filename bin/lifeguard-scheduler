@@ -13,11 +13,12 @@ from lifeguard.logger import lifeguard_logger as logger
 def start_scheduler():
 
     for validation in VALIDATIONS:
-        if "every" in VALIDATIONS[validation]["schedule"]:
-            if "minutes" in VALIDATIONS[validation]["schedule"]["every"]:
-                schedule.every(
-                    VALIDATIONS[validation]["schedule"]["every"]["minutes"]
-                ).minutes.do(validation)
+        content = VALIDATIONS[validation]
+        if "every" in content["schedule"]:
+            if "minutes" in content["schedule"]["every"]:
+                schedule.every(content["schedule"]["every"]["minutes"]).minutes.do(
+                    content["ref"]
+                )
 
     while True:
         time.sleep(1)
