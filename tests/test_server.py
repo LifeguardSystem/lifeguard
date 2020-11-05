@@ -14,6 +14,7 @@ VALIDATIONS = {"test_validation": {"ref": test_validation}}
 
 class TestServer(unittest.TestCase):
     @patch("lifeguard.server.make_response")
+    @patch("lifeguard.server.VALIDATIONS", VALIDATIONS)
     def test_execute_validation(self, mock_make_response):
         mock_response = MagicMock(name="mock_response")
         mock_make_response.return_value = mock_response
@@ -24,6 +25,7 @@ class TestServer(unittest.TestCase):
     @patch("lifeguard.server.make_response")
     @patch("lifeguard.server.traceback")
     @patch("lifeguard.server.logger")
+    @patch("lifeguard.server.VALIDATIONS", VALIDATIONS)
     def test_execute_validation_with_error(
         self, mock_logger, mock_traceback, mock_make_response
     ):

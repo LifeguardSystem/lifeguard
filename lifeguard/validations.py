@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+from json import JSONEncoder
 from functools import wraps
 
 from lifeguard.logger import lifeguard_logger as logger
@@ -25,6 +26,11 @@ class ValidationResponse:
                 "settings": self.settings,
             }
         )
+
+
+class ValidationResponseEncoder(JSONEncoder):
+    def default(self, validation_response):
+        return validation_response.__dict__
 
 
 def load_validations():
