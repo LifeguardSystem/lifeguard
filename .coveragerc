@@ -2,5 +2,4 @@
 omit =  
     setup.py
     tests/fixtures/*
-    */site-packages/coverage/*
-    */site-packages/nose2/*
+    */site-packages/*

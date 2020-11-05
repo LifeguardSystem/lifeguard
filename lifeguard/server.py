@@ -12,7 +12,7 @@ load_validations()
 
 
 @APP.route("/lifeguard/validations/<validation>/execute", methods=["POST"])
-def execute_validaation(validation):
+def execute_validation(validation):
     try:
         result = VALIDATIONS[validation]["ref"]()
         response = make_response(json.dumps(result))
