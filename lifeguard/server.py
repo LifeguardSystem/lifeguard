@@ -3,8 +3,8 @@ import traceback
 
 from flask import Flask, make_response
 
-from lifeguard import VALIDATIONS, load_validations
 from lifeguard.logger import lifeguard_logger as logger
+from lifeguard.validations import VALIDATIONS, load_validations
 
 APP = Flask(__name__)
 

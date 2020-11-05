@@ -6,8 +6,8 @@ import traceback
 
 sys.path.append(".")
 
-from lifeguard import load_validations, VALIDATIONS
 from lifeguard.logger import lifeguard_logger as logger
+from lifeguard.validations import load_validations, VALIDATIONS
 
 
 def start_scheduler():
