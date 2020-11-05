@@ -5,3 +5,4 @@ dist
 *.pyc
 htmlcov
 venv
+.mutmut-cache

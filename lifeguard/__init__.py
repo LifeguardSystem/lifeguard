@@ -64,14 +64,6 @@ def validation(description=None, actions=None, schedule=None):
     """
 
     def function_reference(decorated):
-
-        VALIDATIONS[decorated.__name__] = {
-            "ref": decorated,
-            "description": description,
-            "actions": actions,
-            "schedule": schedule,
-        }
-
         @wraps(decorated)
         def wrapped(*args, **kwargs):
             try:
@@ -80,8 +72,8 @@ def validation(description=None, actions=None, schedule=None):
                 for action in actions or []:
                     logger.info(
                         "executing action %s with result %s...",
-                        str(action),
-                        str(result)[0:100],
+                        str(action.__name__),
+                        str(result),
                     )
                     action(result)
 
@@ -89,10 +81,17 @@ def validation(description=None, actions=None, schedule=None):
             except Exception as exception:
                 logger.warning(
                     "validation error %s: %s",
-                    str(decorated),
+                    str(decorated.__name__),
                     str(exception),
                     extra={"traceback": traceback.format_exc()},
                 )
+
+        VALIDATIONS[decorated.__name__] = {
+            "ref": wrapped,
+            "description": description,
+            "actions": actions,
+            "schedule": schedule,
+        }
 
         return wrapped
 
