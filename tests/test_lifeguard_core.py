@@ -12,7 +12,7 @@ from lifeguard import (
 
 class TestLifeguardCore(unittest.TestCase):
     def test_current_version(self):
-        self.assertEqual(VERSION, "0.0.1")
+        self.assertEqual(VERSION, "0.0.2")
 
     def test_statuses(self):
         self.assertEqual(NORMAL, "NORMAL")
