@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from lifeguard.repositories import ValdationRepository, declare_implementation
+from lifeguard.repositories import ValidationRepository, declare_implementation
 
 IMPLEMENTATION = MagicMock(name="implementation")
 declare_implementation("validation", IMPLEMENTATION)
@@ -9,7 +9,7 @@ declare_implementation("validation", IMPLEMENTATION)
 
 class TestRepositories(unittest.TestCase):
     def setUp(self):
-        self.validation_repository = ValdationRepository()
+        self.validation_repository = ValidationRepository()
 
     def test_validation_repository_save_validation_result(self):
         result = MagicMock(name="result")

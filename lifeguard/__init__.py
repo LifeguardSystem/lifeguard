@@ -2,7 +2,7 @@
 Lifeguard validation core
 """
 
-VERSION = VERSION = "0.0.1"
+VERSION = VERSION = "0.0.2"
 
 NORMAL = "NORMAL"
 WARNING = "WARNING"

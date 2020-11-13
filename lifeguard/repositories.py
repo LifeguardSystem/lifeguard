@@ -11,7 +11,7 @@ class BaseRepository(object):
         self.__implementation__ = IMPLEMENTATIONS[repository]
 
 
-class ValdationRepository(BaseRepository):
+class ValidationRepository(BaseRepository):
     def __init__(self):
         BaseRepository.__init_repository__(self, "validation")
 
