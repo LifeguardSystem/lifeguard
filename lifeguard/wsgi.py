@@ -2,7 +2,7 @@
 Export application for gunicorn
 """
 
-from lifeguard.validations import load_validations
+from lifeguard import setup
 from lifeguard.server import APP as application
 
-load_validations()
+setup()

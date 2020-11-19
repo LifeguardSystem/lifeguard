@@ -23,6 +23,15 @@ class ValidationRepository(BaseRepository):
 
 
 def declare_implementation(repository, implementation):
+
+    if not implementation:
+        return
+
     if repository in IMPLEMENTATIONS:
         logger.warning("overwriting implementation for respository %s", repository)
+    logger.info(
+        "loading implementation %s for repository %s",
+        implementation.__name__,
+        repository,
+    )
     IMPLEMENTATIONS[repository] = implementation

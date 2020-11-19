@@ -6,8 +6,8 @@ import traceback
 
 sys.path.append(".")
 
+from lifeguard import setup
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.validations import load_validations, VALIDATIONS
 
 
 def start_scheduler():
@@ -33,5 +33,5 @@ def start_scheduler():
 
 
 if __name__ == "__main__":
-    load_validations()
+    setup()
     start_scheduler()
