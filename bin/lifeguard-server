@@ -1,3 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
-gunicorn --bind 0.0.0.0:5555 lifeguard.wsgi
+from os import system
+import sys
+
+sys.path.append(".")
+
+from lifeguard.settings import LIFEGUARD_SERVER_PORT
+
+system("gunicorn --bind 0.0.0.0:{} lifeguard.wsgi".format(LIFEGUARD_SERVER_PORT))
+

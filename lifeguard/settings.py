@@ -19,17 +19,13 @@ class SettingsManager(object):
     def read_value(self, name):
         return getattr(self, "__{}".format(name.lower()))
 
-    def load_class(self, name):
-        value = self.__get_value(name)
-        if value:
-            package_path = value.split(".")
-            class_name = package_path.pop(-1)
-            return getattr(__import__(".".join(package_path)), class_name)
-        return value
-
 
 SETTINGS_MANAGER = SettingsManager(
     {
+        "LIFEGUARD_SERVER_PORT": {
+            "default": "5567",
+            "description": "Lifeguard server port number",
+        },
         "LIFEGUARD_DIRECTORY": {
             "default": "/data/lifeguard",
             "description": "Location of validations and others resources",
@@ -45,8 +41,9 @@ SETTINGS_MANAGER = SettingsManager(
     }
 )
 
+LIFEGUARD_SERVER_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_SERVER_PORT")
 LIFEGUARD_DIRECTORY = SETTINGS_MANAGER.read_value("LIFEGUARD_DIRECTORY")
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
-VALIDATION_REPOSITORY_IMPLEMENTATION = SETTINGS_MANAGER.load_class(
+VALIDATION_REPOSITORY_IMPLEMENTATION = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_VALIDATION_REPOSITORY_IMPLEMENTATION"
 )

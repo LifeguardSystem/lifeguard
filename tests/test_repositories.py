@@ -1,11 +1,14 @@
 import unittest
 from unittest.mock import MagicMock, patch
+import sys
 
 from lifeguard.repositories import (
+    IMPLEMENTATIONS,
     ValidationRepository,
     declare_implementation,
-    IMPLEMENTATIONS,
 )
+
+sys.path.append("tests/fixtures")
 
 
 class TestValidationRepositories(unittest.TestCase):
@@ -17,7 +20,11 @@ class TestValidationRepositories(unittest.TestCase):
         self.implementation.__name__ = "mocked_implementation"
 
         with patch("lifeguard.repositories.logger"):
-            declare_implementation("validation", self.implementation)
+            with patch(
+                "lifeguard.repositories.load_implementation"
+            ) as mock_load_implementation:
+                mock_load_implementation.return_value = self.implementation
+                declare_implementation("validation", "TestImplementation")
         self.validation_repository = ValidationRepository()
 
     def test_validation_repository_save_validation_result(self):
@@ -37,9 +44,7 @@ class TestRepositoriesFunctions(unittest.TestCase):
     def setUp(self):
         if "test" in IMPLEMENTATIONS:
             IMPLEMENTATIONS.pop("test")
-
-        self.implementation = MagicMock(name="implementation")
-        self.implementation.__name__ = "mocked_implementation"
+        self.implementation = "fixtures_repositories.TestValidationRepository"
 
     @patch("lifeguard.repositories.logger")
     def test_warning_when_an_implementation_is_overwrited(self, mock_logger):
@@ -54,6 +59,6 @@ class TestRepositoriesFunctions(unittest.TestCase):
         declare_implementation("test", self.implementation)
         mock_logger.info.assert_called_with(
             "loading implementation %s for repository %s",
-            "mocked_implementation",
+            "fixtures_repositories.TestValidationRepository",
             "test",
         )

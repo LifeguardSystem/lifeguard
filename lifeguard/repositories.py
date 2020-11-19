@@ -30,8 +30,12 @@ def declare_implementation(repository, implementation):
     if repository in IMPLEMENTATIONS:
         logger.warning("overwriting implementation for respository %s", repository)
     logger.info(
-        "loading implementation %s for repository %s",
-        implementation.__name__,
-        repository,
+        "loading implementation %s for repository %s", implementation, repository,
     )
-    IMPLEMENTATIONS[repository] = implementation
+    IMPLEMENTATIONS[repository] = load_implementation(implementation)
+
+
+def load_implementation(implementation):
+    package_path = implementation.split(".")
+    class_name = package_path.pop(-1)
+    return getattr(__import__(".".join(package_path)), class_name)()

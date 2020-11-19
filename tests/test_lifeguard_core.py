@@ -14,7 +14,7 @@ from lifeguard import (
 
 class TestLifeguardCore(unittest.TestCase):
     def test_current_version(self):
-        self.assertEqual(VERSION, "0.0.2")
+        self.assertEqual(VERSION, "0.0.3")
 
     def test_statuses(self):
         self.assertEqual(NORMAL, "NORMAL")
