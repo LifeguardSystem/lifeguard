@@ -3,7 +3,7 @@ import unittest
 from unittest.mock import MagicMock, patch
 
 from lifeguard import NORMAL
-from lifeguard.server import execute_validation
+from lifeguard.server import execute_validation, get_validation
 from lifeguard.validations import ValidationResponse
 
 test_validation = MagicMock(name="test_validation")
@@ -39,3 +39,21 @@ class TestServer(unittest.TestCase):
             "test_validation",
             extra={"traceback": "traceback"},
         )
+
+    @patch("lifeguard.server.make_response")
+    @patch("lifeguard.server.ValidationRepository")
+    def test_get_validation_result(
+        self, mock_validation_repository, mock_make_response
+    ):
+
+        mock_response = MagicMock(name="mock_response")
+        mock_make_response.return_value = mock_response
+
+        mock_repository_instance = MagicMock(name="mock_repository_instance")
+        mock_validation_repository.return_value = mock_repository_instance
+        mock_repository_instance.fetch_last_validation_result.return_value = ValidationResponse(
+            "test_validation", NORMAL, {}
+        )
+
+        response = get_validation("test_validation")
+        self.assertEqual(response, mock_response)

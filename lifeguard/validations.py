@@ -11,26 +11,36 @@ VALIDATIONS = {}
 
 
 class ValidationResponse:
-    def __init__(self, validation_name, status, details, settings=None):
+    def __init__(
+        self, validation_name, status, details, settings=None, last_execution=None
+    ):
         self.validation_name = validation_name
         self.status = status
         self.details = details
         self.settings = settings
+        self.last_execution = last_execution
+
+    def get_attributes(self):
+        attributes = {
+            "validation_name": self.validation_name,
+            "status": self.status,
+            "details": self.details,
+            "settings": self.settings,
+        }
+
+        if self.last_execution:
+            attributes["last_execution"] = self.last_execution.strftime(
+                "%Y-%m-%dT%H:%M"
+            )
+        return attributes
 
     def __str__(self):
-        return str(
-            {
-                "validation_name": self.validation_name,
-                "status": self.status,
-                "details": self.details,
-                "settings": self.settings,
-            }
-        )
+        return str(self.get_attributes())
 
 
 class ValidationResponseEncoder(JSONEncoder):
     def default(self, validation_response):
-        return validation_response.__dict__
+        return validation_response.get_attributes()
 
 
 def load_validations():
