@@ -31,7 +31,7 @@ class TestValidations(unittest.TestCase):
     @patch("lifeguard.validations.logger")
     def test_load_validations(self, mock_logger):
         load_validations()
-        mock_logger.info.assert_called_with("loading validation simple_validation")
+        mock_logger.info.assert_any_call("loading validation simple_validation")
         self.assertTrue("simple_validation" in VALIDATIONS)
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
