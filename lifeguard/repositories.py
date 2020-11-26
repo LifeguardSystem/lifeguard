@@ -2,6 +2,7 @@
 Interface repositories
 """
 from datetime import datetime
+from lifeguard.helpers import load_implementation
 from lifeguard.logger import lifeguard_logger as logger
 
 IMPLEMENTATIONS = {}
@@ -32,12 +33,8 @@ def declare_implementation(repository, implementation):
     if repository in IMPLEMENTATIONS:
         logger.warning("overwriting implementation for respository %s", repository)
     logger.info(
-        "loading implementation %s for repository %s", implementation, repository,
+        "loading implementation %s for repository %s",
+        implementation,
+        repository,
     )
     IMPLEMENTATIONS[repository] = load_implementation(implementation)
-
-
-def load_implementation(implementation):
-    package_path = implementation.split(".")
-    class_name = package_path.pop(-1)
-    return getattr(__import__(".".join(package_path)), class_name)()

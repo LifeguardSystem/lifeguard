@@ -56,7 +56,7 @@ def load_validations():
                 __import__(module)
 
 
-def validation(description=None, actions=None, schedule=None):
+def validation(description=None, actions=None, schedule=None, settings=None):
     """
     Decorator to configure a validation
     """
