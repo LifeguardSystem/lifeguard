@@ -34,9 +34,21 @@ SETTINGS_MANAGER = SettingsManager(
             "default": "INFO",
             "description": "Sets the Lifeguard's core log level",
         },
+        "LIFEGUARD_NOTIFICATION_IMPLEMENTATIONS": {
+            "default": "",
+            "description": "Comma-separated list of implementations",
+        },
         "LIFEGUARD_VALIDATION_REPOSITORY_IMPLEMENTATION": {
             "default": None,
             "description": "Full package path to validation implementation class",
+        },
+        "LIFEGUARD_HTTP_PROXY": {
+            "default": None,
+            "description": "Proxy used to http calls",
+        },
+        "LIFEGUARD_HTTPS_PROXY": {
+            "default": None,
+            "description": "Proxy used to https calls",
         },
     }
 )
@@ -44,6 +56,11 @@ SETTINGS_MANAGER = SettingsManager(
 LIFEGUARD_SERVER_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_SERVER_PORT")
 LIFEGUARD_DIRECTORY = SETTINGS_MANAGER.read_value("LIFEGUARD_DIRECTORY")
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
+NOTIFICATION_IMPLEMENTATIONS = SETTINGS_MANAGER.read_value(
+    "LIFEGUARD_NOTIFICATION_IMPLEMENTATIONS"
+)
 VALIDATION_REPOSITORY_IMPLEMENTATION = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_VALIDATION_REPOSITORY_IMPLEMENTATION"
 )
+HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")
+HTTPS_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTPS_PROXY")
