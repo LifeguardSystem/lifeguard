@@ -66,7 +66,6 @@ def validation(description=None, actions=None, schedule=None, settings=None):
         def wrapped(*args, **kwargs):
             try:
                 result = decorated(*args, **kwargs)
-
                 for action in actions or []:
                     logger.info(
                         "executing action %s with result %s...",

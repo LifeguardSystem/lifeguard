@@ -4,6 +4,7 @@ Base of action used to notification
 import json
 
 from lifeguard.helpers import load_implementation
+from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import NOTIFICATION_IMPLEMENTATIONS
 
 NOTIFICATION_METHODS = []
@@ -49,4 +50,5 @@ def notify_in_single_message(validation_response, settings):
 
 def __build_notification_methods():
     for imp in NOTIFICATION_IMPLEMENTATIONS.split(","):
+        logger.info("loading notifacation implementation %s", imp)
         NOTIFICATION_METHODS.append(load_implementation(imp))
