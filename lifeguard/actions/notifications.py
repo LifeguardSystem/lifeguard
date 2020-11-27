@@ -41,9 +41,8 @@ def notify_in_single_message(validation_response, settings):
     notification_settings = response_settings.get("notification", {})
     should_notify = notification_settings.get("notify", False)
 
-    content = json.dumps(validation_response.details)
-
     if should_notify:
+        content = json.dumps(validation_response.details)
         for notification_method in NOTIFICATION_METHODS:
             notification_method.send_single_message(content, settings)
 
