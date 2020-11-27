@@ -5,7 +5,7 @@ from lifeguard.repositories import declare_implementation
 from lifeguard.validations import load_validations
 from lifeguard.settings import VALIDATION_REPOSITORY_IMPLEMENTATION
 
-VERSION = VERSION = "0.0.4"
+VERSION = VERSION = "0.0.5"
 
 NORMAL = "NORMAL"
 WARNING = "WARNING"
