@@ -73,7 +73,7 @@ def validation(description=None, actions=None, schedule=None, settings=None):
                         str(action.__name__),
                         str(result),
                     )
-                    action(result)
+                    action(result, settings)
 
                 return result
             except Exception as exception:

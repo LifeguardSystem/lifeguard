@@ -62,6 +62,6 @@ class TestValidations(unittest.TestCase):
         mock_logger.warning.assert_called_with(
             "validation error %s: %s",
             "simple_with_invalid_action_validation",
-            "invalid_action() takes 0 positional arguments but 1 was given",
+            "invalid_action() takes 0 positional arguments but 2 were given",
             extra={"traceback": "traceback"},
         )

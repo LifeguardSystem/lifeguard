@@ -2,7 +2,7 @@ from lifeguard import NORMAL
 from lifeguard.validations import ValidationResponse, validation
 
 
-def simple_action(_response):
+def simple_action(_response, _settings):
     pass
 
 
