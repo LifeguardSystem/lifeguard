@@ -25,6 +25,19 @@ class ValidationRepository(BaseRepository):
         return self.__implementation__.fetch_last_validation_result(validation_name)
 
 
+class NotificationRepository(BaseRepository):
+    def __init__(self):
+        BaseRepository.__init_repository__(self, "notification")
+
+    def save_last_notification_for_a_validation(self, notification):
+        self.__implementation__.save_last_notification_for_a_validation(notification)
+
+    def fetch_last_notification_for_a_validation(self, validation_name):
+        return self.__implementation__.fetch_last_notification_for_a_validation(
+            validation_name
+        )
+
+
 def declare_implementation(repository, implementation):
 
     if not implementation:

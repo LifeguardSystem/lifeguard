@@ -42,6 +42,10 @@ SETTINGS_MANAGER = SettingsManager(
             "default": None,
             "description": "Full package path to validation implementation class",
         },
+        "LIFEGUARD_NOTIFICATION_REPOSITORY_IMPLEMENTATION": {
+            "default": None,
+            "description": "Full package path to notification implementation class",
+        },
         "LIFEGUARD_HTTP_PROXY": {
             "default": None,
             "description": "Proxy used to http calls",
@@ -58,6 +62,9 @@ LIFEGUARD_DIRECTORY = SETTINGS_MANAGER.read_value("LIFEGUARD_DIRECTORY")
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
 NOTIFICATION_IMPLEMENTATIONS = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_NOTIFICATION_IMPLEMENTATIONS"
+)
+NOTIFICATION_REPOSITORY_IMPLEMENTATION = SETTINGS_MANAGER.read_value(
+    "LIFEGUARD_NOTIFICATION_REPOSITORY_IMPLEMENTATION"
 )
 VALIDATION_REPOSITORY_IMPLEMENTATION = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_VALIDATION_REPOSITORY_IMPLEMENTATION"

@@ -3,7 +3,10 @@ Lifeguard validation core
 """
 from lifeguard.repositories import declare_implementation
 from lifeguard.validations import load_validations
-from lifeguard.settings import VALIDATION_REPOSITORY_IMPLEMENTATION
+from lifeguard.settings import (
+    VALIDATION_REPOSITORY_IMPLEMENTATION,
+    NOTIFICATION_REPOSITORY_IMPLEMENTATION,
+)
 
 VERSION = "0.0.5"
 
@@ -23,3 +26,4 @@ def change_status(old, new):
 def setup():
     load_validations()
     declare_implementation("validation", VALIDATION_REPOSITORY_IMPLEMENTATION)
+    declare_implementation("notification", NOTIFICATION_REPOSITORY_IMPLEMENTATION)

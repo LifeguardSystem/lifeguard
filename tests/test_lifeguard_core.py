@@ -38,4 +38,4 @@ class TestLifeguardCore(unittest.TestCase):
         self, _mock_load_validations, mock_declare_implementation
     ):
         setup()
-        mock_declare_implementation.assert_called_with("validation", None)
+        mock_declare_implementation.assert_any_call("validation", None)
