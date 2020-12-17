@@ -11,16 +11,58 @@ VALIDATIONS = {}
 
 
 class ValidationResponse:
+    """
+    Represents the result of a validation
+    """
+
     def __init__(
         self, validation_name, status, details, settings=None, last_execution=None
     ):
-        self.validation_name = validation_name
-        self.status = status
-        self.details = details
-        self.settings = settings
-        self.last_execution = last_execution
+        self._validation_name = validation_name
+        self._status = status
+        self._details = details
+        self._settings = settings
+        self._last_execution = last_execution
+
+    @property
+    def validation_name(self):
+        """
+        Return validation name
+        """
+        return self._validation_name
+
+    @property
+    def status(self):
+        """
+        Return status
+        """
+        return self._status
+
+    @property
+    def details(self):
+        """
+        Return details
+        """
+        return self._details
+
+    @property
+    def settings(self):
+        """
+        Return settings
+        """
+        return self._settings
+
+    @property
+    def last_execution(self):
+        """
+        Return last execution
+        """
+        return self._last_execution
 
     def get_attributes(self):
+        """
+        Return all attributes in a dict.
+        """
         attributes = {
             "validation_name": self.validation_name,
             "status": self.status,
@@ -39,19 +81,31 @@ class ValidationResponse:
 
 
 class ValidationResponseEncoder(JSONEncoder):
+    """
+    Enconder for Validation Response
+    """
+
     def default(self, validation_response):
+        """
+        Default implementation for validation response encoder
+        """
+
         return validation_response.get_attributes()
 
 
 def load_validations():
+    """
+    Load validations from application path
+    """
+
     sys.path.append(LIFEGUARD_DIRECTORY)
-    for f in os.listdir(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
-        if f.endswith("_validation.py"):
-            validation = f.replace(".py", "")
+    for validation_file in os.listdir(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
+        if validation_file.endswith("_validation.py"):
+            validation_module_name = validation_file.replace(".py", "")
 
-            logger.info("loading validation {}".format(validation))
+            logger.info("loading validation %s", validation_module_name)
 
-            module = "validations.%s" % (validation)
+            module = "validations.%s" % (validation_module_name)
             if module not in sys.modules:
                 __import__(module)
 

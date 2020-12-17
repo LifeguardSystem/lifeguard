@@ -4,17 +4,55 @@ import sys
 
 from lifeguard.repositories import (
     IMPLEMENTATIONS,
+    NotificationRepository,
     ValidationRepository,
     declare_implementation,
 )
 
 sys.path.append("tests/fixtures")
 
+NAMES = ["notification", "validation"]
+
+
+class TestNotificationRepository(unittest.TestCase):
+    def setUp(self):
+        for name in NAMES:
+            if name in IMPLEMENTATIONS:
+                IMPLEMENTATIONS.pop(name)
+
+        self.implementation = MagicMock(name="implementation")
+        self.implementation.__name__ = "mocked_implementation"
+
+        with patch("lifeguard.repositories.logger"):
+            with patch(
+                "lifeguard.repositories.load_implementation"
+            ) as mock_load_implementation:
+                mock_load_implementation.return_value = self.implementation
+                declare_implementation("notification", "TestImplementation")
+        self.notification_repository = NotificationRepository()
+
+    def test_save_last_notification_for_a_validation(self):
+        result = MagicMock(name="result")
+        self.notification_repository.save_last_notification_for_a_validation(result)
+        self.implementation.save_last_notification_for_a_validation.assert_called_with(
+            result
+        )
+
+    def test_validation_repository_fetch_last_validation_result(self):
+        validation_name = MagicMock(name="validation_name")
+        self.notification_repository.fetch_last_notification_for_a_validation(
+            validation_name
+        )
+        self.implementation.fetch_last_notification_for_a_validation.assert_called_with(
+            validation_name
+        )
+
 
 class TestValidationRepositories(unittest.TestCase):
     def setUp(self):
-        if "validation" in IMPLEMENTATIONS:
-            IMPLEMENTATIONS.pop("validation")
+        for name in NAMES:
+            if name in IMPLEMENTATIONS:
+                IMPLEMENTATIONS.pop(name)
 
         self.implementation = MagicMock(name="implementation")
         self.implementation.__name__ = "mocked_implementation"
