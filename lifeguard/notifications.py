@@ -39,6 +39,10 @@ class NotificationStatus:
         """
         return self._opened
 
+    @is_opened.setter
+    def is_opened(self, value):
+        self._opened = value
+
     def update(self):
         """
         Close notification
@@ -65,6 +69,13 @@ class NotificationStatus:
         Return last notification
         """
         return self._last_notification
+
+    @last_notification.setter
+    def last_notification(self, value):
+        """
+        Setter for last notification
+        """
+        self._last_notification = value
 
     def get_attributes(self):
         """
