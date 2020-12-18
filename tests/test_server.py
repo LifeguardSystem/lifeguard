@@ -51,8 +51,8 @@ class TestServer(unittest.TestCase):
 
         mock_repository_instance = MagicMock(name="mock_repository_instance")
         mock_validation_repository.return_value = mock_repository_instance
-        mock_repository_instance.fetch_last_validation_result.return_value = ValidationResponse(
-            "test_validation", NORMAL, {}
+        mock_repository_instance.fetch_last_validation_result.return_value = (
+            ValidationResponse("test_validation", NORMAL, {})
         )
 
         response = get_validation("test_validation")

@@ -59,6 +59,13 @@ class ValidationResponse:
         """
         return self._last_execution
 
+    @last_execution.setter
+    def last_execution(self, value):
+        """
+        Setter for last execution
+        """
+        self._last_execution = value
+
     def get_attributes(self):
         """
         Return all attributes in a dict.
@@ -102,7 +109,6 @@ def load_validations():
     for validation_file in os.listdir(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
         if validation_file.endswith("_validation.py"):
             validation_module_name = validation_file.replace(".py", "")
-
             logger.info("loading validation %s", validation_module_name)
 
             module = "validations.%s" % (validation_module_name)
