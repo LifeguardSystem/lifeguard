@@ -8,7 +8,6 @@ from lifeguard import (
     NORMAL,
     WARNING,
     PROBLEM,
-    VERSION,
     ACTION_STATUSES,
 )
 
