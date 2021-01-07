@@ -1,9 +1,8 @@
 from setuptools import setup, find_packages
-from lifeguard import VERSION
 
 setup(
     name="lifeguard",
-    version=VERSION,
+    version="0.0.7",
     url="https://github.com/LifeguardSystem/lifeguard",
     author="Diego Rubin",
     author_email="contact@diegorubin.dev",

@@ -9,8 +9,6 @@ from lifeguard.repositories import declare_implementation
 from lifeguard.settings import LIFEGUARD_DIRECTORY
 from lifeguard.validations import load_validations
 
-VERSION = "0.0.7"
-
 NORMAL = "NORMAL"
 WARNING = "WARNING"
 PROBLEM = "PROBLEM"

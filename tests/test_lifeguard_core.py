@@ -16,9 +16,6 @@ from tests.fixtures import mock_lifeguard_settings
 
 
 class TestLifeguardCore(unittest.TestCase):
-    def test_current_version(self):
-        self.assertEqual(VERSION, "0.0.6")
-
     def test_statuses(self):
         self.assertEqual(NORMAL, "NORMAL")
         self.assertEqual(WARNING, "WARNING")
