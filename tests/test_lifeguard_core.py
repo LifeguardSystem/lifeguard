@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 
+
 from lifeguard import (
     change_status,
     setup,
@@ -10,6 +11,8 @@ from lifeguard import (
     VERSION,
     ACTION_STATUSES,
 )
+
+from tests.fixtures import mock_lifeguard_settings
 
 
 class TestLifeguardCore(unittest.TestCase):
@@ -28,14 +31,11 @@ class TestLifeguardCore(unittest.TestCase):
         self.assertEqual(change_status(PROBLEM, WARNING), PROBLEM)
 
     @patch("lifeguard.load_validations")
-    def test_setup_call_load_validations(self, mock_load_validations):
+    @patch("lifeguard.recover_settings")
+    def test_setup_call_load_validations(
+        self, mock_recover_settings, mock_load_validations
+    ):
+        mock_recover_settings.return_value = mock_lifeguard_settings
+
         setup()
         mock_load_validations.assert_called()
-
-    @patch("lifeguard.declare_implementation")
-    @patch("lifeguard.load_validations")
-    def test_setup_call_init_validation_persistence_layer(
-        self, _mock_load_validations, mock_declare_implementation
-    ):
-        setup()
-        mock_declare_implementation.assert_any_call("validation", None)

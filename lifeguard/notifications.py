@@ -5,6 +5,10 @@ Base of notification system
 from datetime import datetime
 from json import JSONEncoder
 
+from lifeguard.logger import lifeguard_logger as logger
+
+NOTIFICATION_METHODS = []
+
 
 class NotificationStatus:
     """
@@ -144,3 +148,15 @@ class NotificationBase:
         """
         Close thread with a final message
         """
+
+
+def append_notification_implementation(implementation):
+    """
+    Append a new implementation
+    """
+    if implementation.__name__ not in [
+        notification_method.__class__.__name__
+        for notification_method in NOTIFICATION_METHODS
+    ]:
+        logger.info("appending implementation %s", implementation.__name__)
+        NOTIFICATION_METHODS.append(implementation())

@@ -5,7 +5,6 @@ from lifeguard.settings import (
     LIFEGUARD_DIRECTORY,
     LOG_LEVEL,
     SETTINGS_MANAGER,
-    VALIDATION_REPOSITORY_IMPLEMENTATION,
 )
 
 
@@ -29,13 +28,4 @@ class SettingsTest(unittest.TestCase):
         self.assertEqual(
             SETTINGS_MANAGER.settings["LIFEGUARD_DIRECTORY"]["description"],
             "Location of validations and others resources",
-        )
-
-    def test_lifeguard_repository_implementation(self):
-        self.assertEqual(VALIDATION_REPOSITORY_IMPLEMENTATION, None)
-        self.assertEqual(
-            SETTINGS_MANAGER.settings["LIFEGUARD_VALIDATION_REPOSITORY_IMPLEMENTATION"][
-                "description"
-            ],
-            "Full package path to validation implementation class",
         )

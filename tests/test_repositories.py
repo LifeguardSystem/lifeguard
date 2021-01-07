@@ -21,14 +21,14 @@ class TestNotificationRepository(unittest.TestCase):
                 IMPLEMENTATIONS.pop(name)
 
         self.implementation = MagicMock(name="implementation")
-        self.implementation.__name__ = "mocked_implementation"
 
         with patch("lifeguard.repositories.logger"):
-            with patch(
-                "lifeguard.repositories.load_implementation"
-            ) as mock_load_implementation:
-                mock_load_implementation.return_value = self.implementation
-                declare_implementation("notification", "TestImplementation")
+            implementation_class = MagicMock(name="implementation_class")
+            implementation_class.__name__ = "mocked_implementation"
+            implementation_class.return_value = self.implementation
+
+            declare_implementation("notification", implementation_class)
+
         self.notification_repository = NotificationRepository()
 
     def test_save_last_notification_for_a_validation(self):
@@ -58,11 +58,12 @@ class TestValidationRepositories(unittest.TestCase):
         self.implementation.__name__ = "mocked_implementation"
 
         with patch("lifeguard.repositories.logger"):
-            with patch(
-                "lifeguard.repositories.load_implementation"
-            ) as mock_load_implementation:
-                mock_load_implementation.return_value = self.implementation
-                declare_implementation("validation", "TestImplementation")
+            implementation_class = MagicMock(name="implementation_class")
+            implementation_class.__name__ = "mocked_implementation"
+            implementation_class.return_value = self.implementation
+
+            declare_implementation("validation", implementation_class)
+
         self.validation_repository = ValidationRepository()
 
     def test_validation_repository_save_validation_result(self):
@@ -82,7 +83,8 @@ class TestRepositoriesFunctions(unittest.TestCase):
     def setUp(self):
         if "test" in IMPLEMENTATIONS:
             IMPLEMENTATIONS.pop("test")
-        self.implementation = "fixtures_repositories.TestValidationRepository"
+        self.implementation = MagicMock(name="implementation")
+        self.implementation.__name__ = "test"
 
     @patch("lifeguard.repositories.logger")
     def test_warning_when_an_implementation_is_overwrited(self, mock_logger):
@@ -97,6 +99,6 @@ class TestRepositoriesFunctions(unittest.TestCase):
         declare_implementation("test", self.implementation)
         mock_logger.info.assert_called_with(
             "loading implementation %s for repository %s",
-            "fixtures_repositories.TestValidationRepository",
+            "test",
             "test",
         )

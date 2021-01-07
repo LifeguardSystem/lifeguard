@@ -3,14 +3,10 @@ Base of action used to notification
 """
 import json
 
-from lifeguard import PROBLEM, NORMAL
-from lifeguard.helpers import load_implementation
+from lifeguard import NORMAL, PROBLEM
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.notifications import NotificationStatus
+from lifeguard.notifications import NOTIFICATION_METHODS, NotificationStatus
 from lifeguard.repositories import NotificationRepository
-from lifeguard.settings import NOTIFICATION_IMPLEMENTATIONS
-
-NOTIFICATION_METHODS = []
 
 
 def notify_in_thread(validation_response, settings):
@@ -21,9 +17,6 @@ def notify_in_thread(validation_response, settings):
     :param validation_response: a validation response
     :param settings: validation settings
     """
-    if not NOTIFICATION_METHODS:
-        __build_notification_methods()
-
     repository = NotificationRepository()
     last_notification_status = repository.fetch_last_notification_for_a_validation(
         validation_response.validation_name
@@ -86,9 +79,6 @@ def notify_in_single_message(validation_response, settings):
     :param settings: validation settings
     """
 
-    if not NOTIFICATION_METHODS:
-        __build_notification_methods()
-
     response_settings = validation_response.settings or {}
     notification_settings = response_settings.get("notification", {})
     should_notify = notification_settings.get("notify", False)
@@ -97,9 +87,3 @@ def notify_in_single_message(validation_response, settings):
         content = json.dumps(validation_response.details)
         for notification_method in NOTIFICATION_METHODS:
             notification_method.send_single_message(content, settings)
-
-
-def __build_notification_methods():
-    for imp in NOTIFICATION_IMPLEMENTATIONS.split(","):
-        logger.info("loading notifacation implementation %s", imp)
-        NOTIFICATION_METHODS.append(load_implementation(imp))

@@ -2,7 +2,7 @@
 Interface repositories
 """
 from datetime import datetime
-from lifeguard.helpers import load_implementation
+
 from lifeguard.logger import lifeguard_logger as logger
 
 IMPLEMENTATIONS = {}
@@ -40,14 +40,11 @@ class NotificationRepository(BaseRepository):
 
 def declare_implementation(repository, implementation):
 
-    if not implementation:
-        return
-
     if repository in IMPLEMENTATIONS:
         logger.warning("overwriting implementation for respository %s", repository)
     logger.info(
         "loading implementation %s for repository %s",
-        implementation,
+        implementation.__name__,
         repository,
     )
-    IMPLEMENTATIONS[repository] = load_implementation(implementation)
+    IMPLEMENTATIONS[repository] = implementation()
