@@ -1,18 +1,12 @@
-#!/usr/bin/env python3
 import time
-import sys
-import schedule
 import traceback
+import schedule
 
-sys.path.append(".")
-
-from lifeguard import setup
 from lifeguard.validations import VALIDATIONS
 from lifeguard.logger import lifeguard_logger as logger
 
 
-def start_scheduler():
-
+def configure_validations():
     for validation in VALIDATIONS:
         content = VALIDATIONS[validation]
         if "every" in content["schedule"]:
@@ -21,6 +15,9 @@ def start_scheduler():
                     content["ref"]
                 )
 
+
+def start_scheduler():
+    configure_validations()
     while True:
         time.sleep(1)
         try:
@@ -31,8 +28,3 @@ def start_scheduler():
                 str(exception),
                 extra={"traceback": traceback.format_exc()},
             )
-
-
-if __name__ == "__main__":
-    setup()
-    start_scheduler()

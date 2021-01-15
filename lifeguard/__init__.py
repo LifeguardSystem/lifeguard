@@ -7,6 +7,7 @@ import sys
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.repositories import declare_implementation
 from lifeguard.settings import LIFEGUARD_DIRECTORY
+from lifeguard.controllers import load_custom_controllers
 from lifeguard.validations import load_validations
 
 NORMAL = "NORMAL"
@@ -56,6 +57,7 @@ def setup():
     for plugin in lifeguard_settings.PLUGINS:
         plugin.init(lifeguard_context)
 
+    load_custom_controllers()
     load_validations()
 
     lifeguard_settings.setup(lifeguard_context)

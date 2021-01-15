@@ -1,12 +1,13 @@
-from datetime import datetime
 import json
 import traceback
+from datetime import datetime
 
 from flask import Flask, make_response
 
+from lifeguard.controllers import custom_controllers
+from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.repositories import ValidationRepository
 from lifeguard.validations import VALIDATIONS, ValidationResponseEncoder
-from lifeguard.logger import lifeguard_logger as logger
 
 APP = Flask(__name__)
 
@@ -37,3 +38,6 @@ def execute_validation(validation):
             extra={"traceback": traceback.format_exc()},
         )
         return json.dumps({"error": traceback.format_exc()})
+
+
+APP.register_blueprint(custom_controllers)
