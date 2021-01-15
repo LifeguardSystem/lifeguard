@@ -9,6 +9,11 @@ from lifeguard.settings import LIFEGUARD_DIRECTORY
 custom_controllers = Blueprint("custom", __name__)
 
 
+def register_custom_controller(path, function, options):
+    endpoint = options.pop("endpoint", function.__name__)
+    custom_controllers.add_url_rule(path, endpoint, function, **options)
+
+
 def load_custom_controllers():
     """
     Load custom controllers from application path
@@ -39,8 +44,7 @@ def controller(path, **options):
         def wrapped(*args, **kwargs):
             return decorated(*args, **kwargs)
 
-        endpoint = options.pop("endpoint", decorated.__name__)
-        custom_controllers.add_url_rule(path, endpoint, decorated, **options)
+        register_custom_controller(path, decorated, options)
 
         return wrapped
 
