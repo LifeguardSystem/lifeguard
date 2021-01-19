@@ -9,8 +9,5 @@ black:
 	black lifeguard
 	black tests
 
-settings:
-	support/display_settings
-
 clean:
 	find . -iname "*.pyc" | xargs rm

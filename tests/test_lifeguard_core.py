@@ -9,6 +9,7 @@ from lifeguard import (
     WARNING,
     PROBLEM,
     ACTION_STATUSES,
+    LifeguardContext,
 )
 
 from tests.fixtures import mock_lifeguard_settings
@@ -33,5 +34,5 @@ class TestLifeguardCore(unittest.TestCase):
     ):
         mock_recover_settings.return_value = mock_lifeguard_settings
 
-        setup()
+        setup(LifeguardContext())
         mock_load_validations.assert_called()

@@ -1,12 +1,13 @@
 """
 Lifeguard validation core
 """
+import importlib
 import os
 import sys
 
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.repositories import declare_implementation
-from lifeguard.settings import LIFEGUARD_DIRECTORY
+from lifeguard.settings import LIFEGUARD_DIRECTORY, SETTINGS_MANAGER
 from lifeguard.controllers import load_custom_controllers
 from lifeguard.validations import load_validations
 
@@ -17,13 +18,28 @@ PROBLEM = "PROBLEM"
 ACTION_STATUSES = [NORMAL, WARNING, PROBLEM]
 LIFEGUARD_CONTEXT = {}
 
-sys.path.append(LIFEGUARD_DIRECTORY)
-
 
 class LifeguardContext:
     """
     Lifeguard Context
     """
+
+    def __init__(self):
+        self._only_settings = False
+
+    @property
+    def only_settings(self):
+        """
+        Getter for only settings
+        """
+        return self._only_settings
+
+    @only_settings.setter
+    def only_settings(self, value):
+        """
+        Setter for only settings
+        """
+        self._only_settings = value
 
 
 def change_status(old, new):
@@ -40,22 +56,30 @@ def recover_settings():
     Get settings.py from root of project
     """
 
+    logger.info("lifeguard directory %s", LIFEGUARD_DIRECTORY)
+    sys.path.append(LIFEGUARD_DIRECTORY)
+
+    logger.info("path: %s", sys.path)
+
     lifeguard_settings = "lifeguard_settings"
     logger.info("loading %s", lifeguard_settings)
+    if importlib.util.find_spec(lifeguard_settings) is None:
+        logger.error("lifeguard_settings.py not found!!!")
+        sys.exit(-1)
     return __import__(lifeguard_settings)
 
 
-def setup():
+def setup(lifeguard_context):
     """
     Setup lifeguard context
     """
-    lifeguard_context = LifeguardContext()
-
     # init plugins
     lifeguard_settings = recover_settings()
 
     for plugin in lifeguard_settings.PLUGINS:
-        plugin.init(lifeguard_context)
+        SETTINGS_MANAGER.settings.update(plugin.settings.SETTINGS_MANAGER.settings)
+        if not lifeguard_context.only_settings:
+            plugin.init(lifeguard_context)
 
     load_custom_controllers()
     load_validations()

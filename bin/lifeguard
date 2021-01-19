@@ -1,29 +1,41 @@
 #!/usr/bin/env python3
-
+import argparse
 import _thread
 import sys
 import multiprocessing
 import gunicorn.app.base
+from tabulate import tabulate
 
 sys.path.append(".")
 
-from lifeguard import setup
+from lifeguard import setup, LifeguardContext
 from lifeguard.scheduler import start_scheduler
-from lifeguard.settings import LIFEGUARD_SERVER_PORT
+from lifeguard.settings import LIFEGUARD_SERVER_PORT, SETTINGS_MANAGER, SettingsManager
 
-setup()
 
-# Scheduler
-_thread.start_new_thread(start_scheduler, ())
+def display_settings():
+    data = {"Name": [], "Description": [], "Value": []}
 
-# Server
-from lifeguard.server import APP
+    settings_manager = SettingsManager(SETTINGS_MANAGER.settings)
+
+    for entry in settings_manager.settings:
+        data["Name"].append(entry)
+        data["Description"].append(settings_manager.settings[entry]["description"])
+        data["Value"].append(settings_manager.read_value(entry))
+
+    print(tabulate(data, headers="keys"))
 
 
 def number_of_workers():
     return (multiprocessing.cpu_count() * 2) + 1
 
 
+# Scheduler
+def scheduler():
+    _thread.start_new_thread(start_scheduler, ())
+
+
+# Server
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
     def __init__(self, app, options=None):
         self.options = options or {}
@@ -44,6 +56,26 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
 
 if __name__ == "__main__":
+    lifeguard_context = LifeguardContext()
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-d", "--settings", help="display all plugins settings", action="store_true"
+    )
+    args = parser.parse_args()
+
+    lifeguard_context.only_settings = args.settings
+
+    setup(lifeguard_context)
+
+    if args.settings:
+        display_settings()
+        sys.exit(0)
+
+    scheduler()
+
+    from lifeguard.server import APP
+
     StandaloneApplication(
         APP,
         {
