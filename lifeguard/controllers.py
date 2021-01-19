@@ -1,7 +1,10 @@
 import os
 import sys
-from flask import Blueprint
+import traceback
 from functools import wraps
+import jinja2
+from flask import Blueprint
+from flask import Response as FlaskResponse
 
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import LIFEGUARD_DIRECTORY
@@ -9,9 +12,67 @@ from lifeguard.settings import LIFEGUARD_DIRECTORY
 custom_controllers = Blueprint("custom", __name__)
 
 
+def render_template(template, searchpath):
+    template_loader = jinja2.FileSystemLoader(searchpath=searchpath)
+    template_env = jinja2.Environment(loader=template_loader)
+    template = template_env.get_template(template)
+    return template.render()
+
+
+class Response:
+    def __init__(self):
+        self._content_type = "text/html"
+        self._content = None
+        self._template = None
+        self._template_searchpath = None
+        self._status = 200
+
+    @property
+    def content_type(self):
+        return self._content_type
+
+    @content_type.setter
+    def content_type(self, value):
+        self._content_type = value
+
+    @property
+    def template(self):
+        return self._template
+
+    @template.setter
+    def template(self, value):
+        self._template = value
+
+    @property
+    def template_searchpath(self):
+        return self._template_searchpath
+
+    @template_searchpath.setter
+    def template_searchpath(self, value):
+        self._template_searchpath = value
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        self._status = value
+
+    @property
+    def content(self):
+        return self._content
+
+    @content.setter
+    def content(self, value):
+        self._content = value
+
+
 def register_custom_controller(path, function, options):
     endpoint = options.pop("endpoint", function.__name__)
-    custom_controllers.add_url_rule(path, endpoint, function, **options)
+    custom_controllers.add_url_rule(
+        path, endpoint, configure_controller(function), **options
+    )
 
 
 def load_custom_controllers():
@@ -34,6 +95,35 @@ def load_custom_controllers():
                 __import__(module)
 
 
+def treat_response(response):
+    content = response.content
+    if response.template:
+        content = render_template(response.template, response.template_searchpath)
+
+    return FlaskResponse(
+        content, content_type=response.content_type, status=response.status
+    )
+
+
+def configure_controller(function):
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+        try:
+            response = function(*args, **kwargs)
+
+            if isinstance(response, Response):
+                return treat_response(response)
+            return response
+        except Exception as error:
+            logger.error(
+                "error on render dashboard index: %s",
+                str(error),
+                extra={"traceback": traceback.format_exc()},
+            )
+
+    return wrapped
+
+
 def controller(path, **options):
     """
     Decorator to configure a custom controller
@@ -45,7 +135,6 @@ def controller(path, **options):
             return decorated(*args, **kwargs)
 
         register_custom_controller(path, decorated, options)
-
         return wrapped
 
     return function_reference
