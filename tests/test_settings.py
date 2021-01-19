@@ -24,7 +24,7 @@ class SettingsTest(unittest.TestCase):
         )
 
     def test_lifeguard_directory(self):
-        self.assertEqual(LIFEGUARD_DIRECTORY, "/data/lifeguard")
+        self.assertEqual(LIFEGUARD_DIRECTORY, ".")
         self.assertEqual(
             SETTINGS_MANAGER.settings["LIFEGUARD_DIRECTORY"]["description"],
             "Location of validations and others resources",

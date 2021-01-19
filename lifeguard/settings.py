@@ -27,7 +27,7 @@ SETTINGS_MANAGER = SettingsManager(
             "description": "Lifeguard server port number",
         },
         "LIFEGUARD_DIRECTORY": {
-            "default": "/data/lifeguard",
+            "default": ".",
             "description": "Location of validations and others resources",
         },
         "LIFEGUARD_LOG_LEVEL": {
