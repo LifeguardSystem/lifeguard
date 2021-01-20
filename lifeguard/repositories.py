@@ -24,6 +24,9 @@ class ValidationRepository(BaseRepository):
     def fetch_last_validation_result(self, validation_name):
         return self.__implementation__.fetch_last_validation_result(validation_name)
 
+    def fetch_all_validation_results(self):
+        return self.__implementation__.fetch_all_validation_results()
+
 
 class NotificationRepository(BaseRepository):
     def __init__(self):

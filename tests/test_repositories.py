@@ -78,6 +78,10 @@ class TestValidationRepositories(unittest.TestCase):
             validation_name
         )
 
+    def test_validation_repository_fetch_all_validation_results(self):
+        self.validation_repository.fetch_all_validation_results()
+        self.implementation.fetch_all_validation_results.assert_called()
+
 
 class TestRepositoriesFunctions(unittest.TestCase):
     def setUp(self):
