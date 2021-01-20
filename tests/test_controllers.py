@@ -39,7 +39,7 @@ class TestControllers(unittest.TestCase):
         mock_flask_response.assert_called_with(
             "template rendered", content_type="text/html", status=200
         )
-        mock_render_template.assert_called_with("template.html", "/templates")
+        mock_render_template.assert_called_with("template.html", "/templates", data={})
 
     @patch("lifeguard.controllers.FlaskResponse")
     @patch("lifeguard.controllers.render_template")
@@ -108,3 +108,21 @@ class TestControllers(unittest.TestCase):
         mock_jinja2.FileSystemLoader.assert_called_with(searchpath="searchpath")
         mock_jinja2.Environment.assert_called_with(loader=template_loader)
         template.render.assert_called()
+
+    @patch("lifeguard.controllers.jinja2")
+    def test_render_template_with_data(self, mock_jinja2):
+
+        template_loader = MagicMock(name="template_loader")
+        mock_jinja2.FileSystemLoader.return_value = template_loader
+
+        template_env = MagicMock(name="template_env")
+        mock_jinja2.Environment.return_value = template_env
+
+        template = MagicMock(name="template")
+        template_env.get_template.return_value = template
+
+        render_template("template", "searchpath", data={"test": True})
+
+        mock_jinja2.FileSystemLoader.assert_called_with(searchpath="searchpath")
+        mock_jinja2.Environment.assert_called_with(loader=template_loader)
+        template.render.assert_called_with(test=True)

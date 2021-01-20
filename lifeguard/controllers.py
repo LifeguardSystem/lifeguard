@@ -12,11 +12,15 @@ from lifeguard.settings import LIFEGUARD_DIRECTORY
 custom_controllers = Blueprint("custom", __name__)
 
 
-def render_template(template, searchpath):
+def render_template(template, searchpath, data=None):
+
+    if not data:
+        data = {}
+
     template_loader = jinja2.FileSystemLoader(searchpath=searchpath)
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template(template)
-    return template.render()
+    return template.render(**data)
 
 
 class Response:
@@ -26,6 +30,7 @@ class Response:
         self._template = None
         self._template_searchpath = None
         self._status = 200
+        self._data = {}
 
     @property
     def content_type(self):
@@ -67,6 +72,14 @@ class Response:
     def content(self, value):
         self._content = value
 
+    @property
+    def data(self):
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
+
 
 def register_custom_controller(path, function, options):
     endpoint = options.pop("endpoint", function.__name__)
@@ -98,7 +111,9 @@ def load_custom_controllers():
 def treat_response(response):
     content = response.content
     if response.template:
-        content = render_template(response.template, response.template_searchpath)
+        content = render_template(
+            response.template, response.template_searchpath, data=response.data
+        )
 
     return FlaskResponse(
         content, content_type=response.content_type, status=response.status
