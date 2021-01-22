@@ -69,7 +69,7 @@ def pudim_is_alive():
 
 To create a custom controller with decorators see the example
 
-```
+```python
 import json
 
 from lifeguard.controllers import controller
