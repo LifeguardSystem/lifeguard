@@ -2,9 +2,11 @@ import os
 import sys
 import traceback
 from functools import wraps
+
 import jinja2
 from flask import Blueprint
 from flask import Response as FlaskResponse
+from flask import request as flask_request
 
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import LIFEGUARD_DIRECTORY
@@ -21,6 +23,32 @@ def render_template(template, searchpath, data=None):
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template(template)
     return template.render(**data)
+
+
+class Request:
+    @property
+    def json(self):
+        return flask_request.json
+
+    @property
+    def data(self):
+        return flask_request.data
+
+    @property
+    def form(self):
+        return flask_request.form
+
+    @property
+    def method(self):
+        return flask_request.method
+
+    @property
+    def args(self):
+        return flask_request.args
+
+    @property
+    def values(self):
+        return flask_request.values
 
 
 class Response:
@@ -153,3 +181,6 @@ def controller(path, **options):
         return wrapped
 
     return function_reference
+
+
+request = Request()

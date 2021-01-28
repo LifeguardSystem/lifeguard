@@ -7,8 +7,11 @@ from lifeguard.controllers import (
     treat_response,
     configure_controller,
     render_template,
+    Request,
 )
 from tests.fixtures.controllers.hello_controller import hello
+
+mock_flask_request = MagicMock(name="flask_request")
 
 
 class TestControllers(unittest.TestCase):
@@ -126,3 +129,20 @@ class TestControllers(unittest.TestCase):
         mock_jinja2.FileSystemLoader.assert_called_with(searchpath="searchpath")
         mock_jinja2.Environment.assert_called_with(loader=template_loader)
         template.render.assert_called_with(test=True)
+
+    @patch("lifeguard.controllers.flask_request", mock_flask_request)
+    def test_request_proxy(self):
+        request = Request()
+        mock_flask_request.json = "json"
+        mock_flask_request.data = "data"
+        mock_flask_request.form = "form"
+        mock_flask_request.method = "method"
+        mock_flask_request.args = "args"
+        mock_flask_request.values = "values"
+
+        self.assertEqual("json", request.json)
+        self.assertEqual("data", request.data)
+        self.assertEqual("form", request.form)
+        self.assertEqual("method", request.method)
+        self.assertEqual("args", request.args)
+        self.assertEqual("values", request.values)
