@@ -9,6 +9,7 @@ from tabulate import tabulate
 sys.path.append(".")
 
 from lifeguard import setup, LifeguardContext
+from lifeguard.bootstrap import generate_base_project
 from lifeguard.scheduler import start_scheduler
 from lifeguard.settings import LIFEGUARD_SERVER_PORT, SETTINGS_MANAGER, SettingsManager
 
@@ -56,14 +57,24 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
 
 if __name__ == "__main__":
-    lifeguard_context = LifeguardContext()
 
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-d", "--settings", help="display all plugins settings", action="store_true"
     )
+    parser.add_argument(
+        "-g",
+        "--generate",
+        help="generate base of lifeguard instance project",
+        action="store_true",
+    )
     args = parser.parse_args()
 
+    if args.generate:
+        generate_base_project()
+        sys.exit(0)
+
+    lifeguard_context = LifeguardContext()
     lifeguard_context.only_settings = args.settings
 
     setup(lifeguard_context)
