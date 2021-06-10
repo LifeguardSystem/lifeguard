@@ -1,6 +1,7 @@
 import os
 import sys
 import traceback
+import uuid
 from json import JSONEncoder
 from functools import wraps
 
@@ -143,7 +144,10 @@ def validation(description=None, actions=None, schedule=None, settings=None):
                     extra={"traceback": traceback.format_exc()},
                 )
 
-        VALIDATIONS[decorated.__name__] = {
+        __fname__ = "__" + decorated.__name__ + str(uuid.uuid1()).split('-')[-1]
+
+        VALIDATIONS[__fname__] = {
+            "__name__": decorated.__name__,
             "ref": wrapped,
             "description": description,
             "actions": actions,

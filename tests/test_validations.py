@@ -1,8 +1,9 @@
+from logging import fatal
 import unittest
 
 from unittest.mock import patch
 
-from lifeguard import NORMAL
+from lifeguard import NORMAL, PROBLEM
 from lifeguard.validations import ValidationResponse, load_validations, VALIDATIONS
 
 
@@ -32,25 +33,31 @@ class TestValidations(unittest.TestCase):
     def test_load_validations(self, mock_logger):
         load_validations()
         mock_logger.info.assert_any_call("loading validation %s", "simple_validation")
-        self.assertTrue("simple_validation" in VALIDATIONS)
+        for v in VALIDATIONS:
+            if VALIDATIONS[v]["__name__"] == "simple_validation":
+                self.assertTrue(True)
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")
     def test_execute_validation(self, _mock_logger):
         load_validations()
-        response = VALIDATIONS["simple_validation"]["ref"]()
-        self.assertEqual(response.status, NORMAL)
+        for v in VALIDATIONS:
+            if VALIDATIONS[v]["__name__"] == "simple_validation":
+                response = VALIDATIONS[v]["ref"]()
+                self.assertEqual(response.status, NORMAL)
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")
     def test_execute_validation_with_action(self, mock_logger):
         load_validations()
-        VALIDATIONS["simple_with_action_validation"]["ref"]()
-        mock_logger.info.assert_called_with(
-            "executing action %s with result %s...",
-            "simple_action",
-            "{'validation_name': 'simple_with_action_validation', 'status': 'NORMAL', 'details': {}, 'settings': None}",
-        )
+        for v in VALIDATIONS:
+            if VALIDATIONS[v]["__name__"] == "simple_with_action_validation":
+                VALIDATIONS[v]["ref"]()
+                mock_logger.info.assert_called_with(
+                    "executing action %s with result %s...",
+                    "simple_action",
+                    "{'validation_name': 'simple_with_action_validation', 'status': 'NORMAL', 'details': {}, 'settings': None}",
+                )
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")
@@ -58,10 +65,12 @@ class TestValidations(unittest.TestCase):
     def test_execute_validation_with_invalid_action(self, mock_traceback, mock_logger):
         mock_traceback.format_exc.return_value = "traceback"
         load_validations()
-        VALIDATIONS["simple_with_invalid_action_validation"]["ref"]()
-        mock_logger.warning.assert_called_with(
-            "validation error %s: %s",
-            "simple_with_invalid_action_validation",
-            "invalid_action() takes 0 positional arguments but 2 were given",
-            extra={"traceback": "traceback"},
-        )
+        for v in VALIDATIONS:
+            if VALIDATIONS[v]["__name__"] == "simple_with_invalid_action_validation":
+                VALIDATIONS[v]["ref"]()
+                mock_logger.warning.assert_called_with(
+                    "validation error %s: %s",
+                    "simple_with_invalid_action_validation",
+                    "invalid_action() takes 0 positional arguments but 2 were given",
+                    extra={"traceback": "traceback"},
+                )
