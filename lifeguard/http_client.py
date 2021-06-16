@@ -6,6 +6,22 @@ import requests
 from lifeguard.settings import HTTP_PROXY, HTTPS_PROXY
 
 
+def get(url, headers=None):
+    """
+    :param url:
+    :param headers:
+
+    :return: :class:`Response <Response>` object
+    :rtype: requests.Response
+    """
+    request_args = {
+        "url": url,
+        "headers": headers,
+    }
+    __append_proxies(request_args)
+    return requests.get(**request_args)
+
+
 def post(url, data=None, headers=None):
     """
     :param url:
