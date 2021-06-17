@@ -1,10 +1,14 @@
 import unittest
 
+from unittest.mock import patch, call
+
 from lifeguard.settings import (
     LIFEGUARD_SERVER_PORT,
     LIFEGUARD_DIRECTORY,
     LOG_LEVEL,
     SETTINGS_MANAGER,
+    SettingsManager,
+    AttributeNotFoundInSettings,
 )
 
 
@@ -29,3 +33,47 @@ class SettingsTest(unittest.TestCase):
             SETTINGS_MANAGER.settings["LIFEGUARD_DIRECTORY"]["description"],
             "Location of validations and others resources",
         )
+
+    def test_get_default_value_for_dynamic_attribute(self):
+        settings = SettingsManager(
+            {
+                r"DYNAMIC_\w+_ATTRIBUTE": {
+                    "default": "default_value",
+                    "description": "dynammic descritpion",
+                }
+            }
+        )
+
+        self.assertEqual(settings.read_value("DYNAMIC_TEST_ATTRIBUTE"), "default_value")
+
+    @patch("lifeguard.settings.environ")
+    def test_get_value_for_dynamic_attribute_from_env(self, mock_environ):
+        mock_environ.get.return_value = "from env"
+        settings = SettingsManager(
+            {
+                r"DYNAMIC_\w+_ATTRIBUTE": {
+                    "default": "default_value",
+                    "description": "dynammic descritpion",
+                }
+            }
+        )
+
+        self.assertEqual(settings.read_value("DYNAMIC_TEST_ATTRIBUTE"), "from env")
+        mock_environ.get.assert_has_calls(
+            [
+                call("DYNAMIC_\\w+_ATTRIBUTE", "default_value"),
+                call("DYNAMIC_TEST_ATTRIBUTE", "default_value"),
+            ]
+        )
+
+    def test_raise_exception_if_pattern_not_found(self):
+        settings = SettingsManager(
+            {
+                r"DYNAMIC_\w+_ATTRIBUTE": {
+                    "default": "default_value",
+                    "description": "dynammic descritpion",
+                }
+            }
+        )
+        with self.assertRaises(AttributeNotFoundInSettings):
+            settings.read_value("DYNAMIC__ATTRIBUTE")

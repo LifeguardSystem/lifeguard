@@ -1,8 +1,13 @@
 """
 Lifeguard core settings
 """
+import re
 import sys
 from os import environ
+
+
+class AttributeNotFoundInSettings(Exception):
+    """Raised when the entry not found in settings"""
 
 
 class SettingsManager(object):
@@ -16,8 +21,21 @@ class SettingsManager(object):
         options = self.settings[name]
         return environ.get(name, options["default"])
 
+    def __search_dynamic_attribute(self, name):
+        for entry in self.settings:
+            if re.match(entry, name):
+                return environ.get(name, self.settings[entry]["default"])
+
+        raise AttributeNotFoundInSettings("{} not found".format(name))
+
     def read_value(self, name):
-        return getattr(self, "__{}".format(name.lower()))
+        """
+        Read value from settings
+        """
+        if hasattr(self, "__{}".format(name.lower())):
+            return getattr(self, "__{}".format(name.lower()))
+
+        return self.__search_dynamic_attribute(name)
 
 
 SETTINGS_MANAGER = SettingsManager(
