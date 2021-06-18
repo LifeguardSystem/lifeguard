@@ -74,7 +74,7 @@ def custom_action(validation_response, settings):
     pass
 ```
 
-Builtin validations can be found in: [Wiki](https://github.com/LifeguardSystem/lifeguard/wiki).
+Builtin validations can be found in [Wiki](https://github.com/LifeguardSystem/lifeguard/wiki).
 
 ### Create a custom controller
 
