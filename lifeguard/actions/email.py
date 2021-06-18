@@ -56,14 +56,16 @@ def send_email(validation_response, settings):
 
     if validation_response.status in settings["email"].get(
         "remove_from_sent_list_when", [NORMAL]
-    ) and (validation_response.name in EMAIL_NOTIFICATIONS):
-        EMAIL_NOTIFICATIONS.pop(validation_response.name)
+    ) and (validation_response.validation_name in EMAIL_NOTIFICATIONS):
+        EMAIL_NOTIFICATIONS.pop(validation_response.validation_name)
 
     if (
         validation_response.status in settings["email"].get("send_in", [PROBLEM])
-        and validation_response.name not in EMAIL_NOTIFICATIONS
+        and validation_response.validation_name not in EMAIL_NOTIFICATIONS
     ):
-        EMAIL_NOTIFICATIONS[validation_response.name] = {"sent_at": datetime.now()}
+        EMAIL_NOTIFICATIONS[validation_response.validation_name] = {
+            "sent_at": datetime.now()
+        }
 
         message = Message(
             settings["email"]["receivers"],

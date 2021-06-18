@@ -13,7 +13,7 @@ class ActionEmailTest(unittest.TestCase):
         mock_smtplib.SMTP.return_value = mock_session
 
         validation_response = MagicMock(name="validation_response")
-        validation_response.name = "validation_with_problem"
+        validation_response.validation_name = "validation_with_problem"
         validation_response.status = PROBLEM
         validation_response.details = {"status": PROBLEM}
         send_email(
@@ -41,7 +41,7 @@ class ActionEmailTest(unittest.TestCase):
             "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{'status': 'PROBLEM'}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://lolcahost:5567.\n</p>\n",
             ["email@server.com"],
         )
-        self.assertTrue(validation_response.name in EMAIL_NOTIFICATIONS)
+        self.assertTrue(validation_response.validation_name in EMAIL_NOTIFICATIONS)
 
     @patch("lifeguard.actions.email.logger")
     @patch("lifeguard.actions.email.smtplib")
@@ -50,7 +50,7 @@ class ActionEmailTest(unittest.TestCase):
         mock_smtplib.SMTP.return_value = mock_session
 
         validation_response = MagicMock(name="validation_response")
-        validation_response.name = "validation_test"
+        validation_response.validation_name = "validation_test"
         validation_response.status = NORMAL
         validation_response.details = {}
 
@@ -73,7 +73,7 @@ class ActionEmailTest(unittest.TestCase):
         mock_smtplib.SMTP.return_value = mock_session
 
         validation_response = MagicMock(name="validation_response")
-        validation_response.name = "validation_in_list"
+        validation_response.validation_name = "validation_in_list"
         validation_response.status = NORMAL
         validation_response.details = {}
 
