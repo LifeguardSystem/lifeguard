@@ -16,30 +16,6 @@ WARNING = "WARNING"
 PROBLEM = "PROBLEM"
 
 ACTION_STATUSES = [NORMAL, WARNING, PROBLEM]
-LIFEGUARD_CONTEXT = {}
-
-
-class LifeguardContext:
-    """
-    Lifeguard Context
-    """
-
-    def __init__(self):
-        self._only_settings = False
-
-    @property
-    def only_settings(self):
-        """
-        Getter for only settings
-        """
-        return self._only_settings
-
-    @only_settings.setter
-    def only_settings(self, value):
-        """
-        Setter for only settings
-        """
-        self._only_settings = value
 
 
 def change_status(old, new):

@@ -8,8 +8,9 @@ from tabulate import tabulate
 
 sys.path.append(".")
 
-from lifeguard import setup, LifeguardContext
+from lifeguard import setup
 from lifeguard.bootstrap import generate_base_project
+from lifeguard.context import LIFEGUARD_CONTEXT
 from lifeguard.scheduler import start_scheduler
 from lifeguard.settings import LIFEGUARD_SERVER_PORT, SETTINGS_MANAGER, SettingsManager
 
@@ -74,10 +75,9 @@ if __name__ == "__main__":
         generate_base_project()
         sys.exit(0)
 
-    lifeguard_context = LifeguardContext()
-    lifeguard_context.only_settings = args.settings
+    LIFEGUARD_CONTEXT.only_settings = args.settings
 
-    setup(lifeguard_context)
+    setup(LIFEGUARD_CONTEXT)
 
     if args.settings:
         display_settings()
