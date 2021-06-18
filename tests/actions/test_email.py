@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock
 
 from lifeguard import NORMAL, PROBLEM
-from lifeguard.actions.email import send_email
+from lifeguard.actions.email import send_email, EMAIL_NOTIFICATIONS
 
 
 class ActionEmailTest(unittest.TestCase):
@@ -13,6 +13,7 @@ class ActionEmailTest(unittest.TestCase):
         mock_smtplib.SMTP.return_value = mock_session
 
         validation_response = MagicMock(name="validation_response")
+        validation_response.name = "validation_with_problem"
         validation_response.status = PROBLEM
         validation_response.details = {"status": PROBLEM}
         send_email(
@@ -40,6 +41,56 @@ class ActionEmailTest(unittest.TestCase):
             "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{'status': 'PROBLEM'}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://lolcahost:5567.\n</p>\n",
             ["email@server.com"],
         )
+        self.assertTrue(validation_response.name in EMAIL_NOTIFICATIONS)
+
+    @patch("lifeguard.actions.email.logger")
+    @patch("lifeguard.actions.email.smtplib")
+    def test_not_send_email(self, mock_smtplib, mock_logger):
+        mock_session = MagicMock(name="session")
+        mock_smtplib.SMTP.return_value = mock_session
+
+        validation_response = MagicMock(name="validation_response")
+        validation_response.name = "validation_test"
+        validation_response.status = NORMAL
+        validation_response.details = {}
+
+        send_email(
+            validation_response,
+            {
+                "email": {
+                    "subject": "subject example",
+                    "receivers": [{"name": "name", "email": "email@server.com"}],
+                }
+            },
+        )
+
+        mock_logger.info.assert_not_called()
+
+    @patch("lifeguard.actions.email.logger")
+    @patch("lifeguard.actions.email.smtplib")
+    def test_remove_validation_from_sent_list(self, mock_smtplib, mock_logger):
+        mock_session = MagicMock(name="session")
+        mock_smtplib.SMTP.return_value = mock_session
+
+        validation_response = MagicMock(name="validation_response")
+        validation_response.name = "validation_in_list"
+        validation_response.status = NORMAL
+        validation_response.details = {}
+
+        EMAIL_NOTIFICATIONS["validation_in_list"] = {}
+
+        send_email(
+            validation_response,
+            {
+                "email": {
+                    "subject": "subject example",
+                    "receivers": [{"name": "name", "email": "email@server.com"}],
+                }
+            },
+        )
+
+        mock_logger.info.assert_not_called()
+        self.assertTrue("validation_in_list" not in EMAIL_NOTIFICATIONS)
 
     @patch("lifeguard.actions.email.traceback")
     @patch("lifeguard.actions.email.logger")

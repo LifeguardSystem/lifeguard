@@ -3,20 +3,23 @@ Action to send problem
 """
 import smtplib
 import traceback
+from datetime import datetime
 
-from lifeguard import PROBLEM
+from lifeguard import NORMAL, PROBLEM
 from lifeguard.context import LIFEGUARD_CONTEXT
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import (
+    LIFEGUARD_EMAIL_SMTP_PASSWD,
     LIFEGUARD_EMAIL_SMTP_PORT,
     LIFEGUARD_EMAIL_SMTP_SERVER,
     LIFEGUARD_EMAIL_SMTP_USER,
-    LIFEGUARD_EMAIL_SMTP_PASSWD,
     LIFEGUARD_PUBLIC_ADDRESS,
 )
 
+EMAIL_NOTIFICATIONS = {}
 
-class Message(object):
+
+class Message:
     """
     Email render template
     """
@@ -28,6 +31,9 @@ class Message(object):
         self.template = template
 
     def render(self):
+        """
+        Render email to send
+        """
         receivers_line = ",".join(
             [
                 "{} <{}>".format(receiver["name"], receiver["email"])
@@ -44,7 +50,20 @@ class Message(object):
 
 
 def send_email(validation_response, settings):
-    if validation_response.status in settings["email"]["send_in"]:
+    """
+    Send email action
+    """
+
+    if validation_response.status in settings["email"].get(
+        "remove_from_sent_list_when", [NORMAL]
+    ) and (validation_response.name in EMAIL_NOTIFICATIONS):
+        EMAIL_NOTIFICATIONS.pop(validation_response.name)
+
+    if (
+        validation_response.status in settings["email"].get("send_in", [PROBLEM])
+        and validation_response.name not in EMAIL_NOTIFICATIONS
+    ):
+        EMAIL_NOTIFICATIONS[validation_response.name] = {"sent_at": datetime.now()}
 
         message = Message(
             settings["email"]["receivers"],
