@@ -65,6 +65,17 @@ def pudim_is_alive():
     )
 ```
 
+### Validation Actions
+
+Action is a simple python function with only 2 arguments: a validation response and a dict called settings. These settings are the parameter called settings in validation.
+
+```python
+def custom_action(validation_response, settings):
+    pass
+```
+
+Builtin validations can be found in: [Wiki](https://github.com/LifeguardSystem/lifeguard/wiki).
+
 ### Create a custom controller
 
 To create a custom controller with decorators see the example
