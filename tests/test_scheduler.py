@@ -16,3 +16,23 @@ class TestScheduler(unittest.TestCase):
         configure_validations()
 
         mock_schedule.every.assert_called_with(1)
+
+    @patch(
+        "lifeguard.scheduler.VALIDATIONS",
+        {"example": {"ref": mock_ref, "schedule": {"every": {"hours": 1}}}},
+    )
+    @patch("lifeguard.scheduler.schedule")
+    def test_configure_validations_every_hour(self, mock_schedule):
+        configure_validations()
+
+        mock_schedule.every.assert_called_with(1)
+
+    @patch(
+        "lifeguard.scheduler.VALIDATIONS",
+        {"example": {"ref": mock_ref, "schedule": {"every": {"blah": 1}}}},
+    )
+    @patch("lifeguard.scheduler.schedule")
+    def test_configure_validations_with_invalid_time_period(self, mock_schedule):
+        configure_validations()
+
+        mock_schedule.every.assert_not_called()
