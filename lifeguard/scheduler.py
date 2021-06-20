@@ -27,9 +27,13 @@ def configure_validations():
         if "every" in content["schedule"]:
             time_period = get_time_period(content)
             if time_period in valid_time_periods:
-                schedule.every(content["schedule"]["every"][time_period])[
-                    time_period
-                ].do(content["ref"])
+                job_instance = schedule.every(content["schedule"]["every"][time_period])
+                job_func = get_dynamic_job_func(job_instance, time_period)
+                job_func.do(content["ref"])
+
+
+def get_dynamic_job_func(job_instance, time_period):
+    return getattr(job_instance, time_period)
 
 
 def get_time_period(content):
