@@ -61,7 +61,7 @@ SETTINGS_MANAGER = SettingsManager(
             "description": "Proxy used to https calls",
         },
         "LIFEGUARD_PUBLIC_ADDRESS": {
-            "default": "http://lolcahost:5567",
+            "default": "http://localhost:5567",
             "description": "Address to access dashboard",
         },
         "LIFEGUARD_EMAIL_SMTP_USER": {
