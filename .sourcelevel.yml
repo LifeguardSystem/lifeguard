@@ -1,0 +1,20 @@
+engines:
+  bandit:
+    enabled: true
+  duplication:
+    config:
+      languages:
+      - ruby
+    enabled: true
+  pylint:
+    enabled: true
+  radon:
+    enabled: true
+exclude_paths:
+- bin
+- build
+- dist
+- htmlcov
+- lifeguard.egg-info
+- tests
+- venv
