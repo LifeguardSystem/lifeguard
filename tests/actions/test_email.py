@@ -33,12 +33,12 @@ class ActionEmailTest(unittest.TestCase):
         mock_session.sendmail.assert_called_with(
             "smtp_user",
             ["email@server.com"],
-            "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{'status': 'PROBLEM'}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://lolcahost:5567.\n</p>\n",
+            "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{'status': 'PROBLEM'}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://localhost:5567.\n</p>\n",
         )
         mock_session.quit.assert_called()
         mock_logger.info.assert_called_with(
             "sending email %s to %s",
-            "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{'status': 'PROBLEM'}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://lolcahost:5567.\n</p>\n",
+            "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{'status': 'PROBLEM'}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://localhost:5567.\n</p>\n",
             ["email@server.com"],
         )
         self.assertTrue(validation_response.validation_name in EMAIL_NOTIFICATIONS)
@@ -120,7 +120,7 @@ class ActionEmailTest(unittest.TestCase):
 
         mock_logger.error.assert_called_with(
             "error on send email %s to %s",
-            "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://lolcahost:5567.\n</p>\n",
+            "From: smtp_user\nTo: name <email@server.com>\nMIME-Version: 1.0\nContent-type: text/html\nSubject: subject example\n\n<h1>Validation details</h1>\n\n<quote>\n{}\n</quote>\n\n<hr/>\n<p>\n    See more details in Lifeguard Dashboard: http://localhost:5567.\n</p>\n",
             ["email@server.com"],
             extra={"traceback": "format_exc"},
         )
