@@ -80,6 +80,10 @@ SETTINGS_MANAGER = SettingsManager(
             "default": "smtp_port",
             "description": "SMTP port used in email action",
         },
+        "LIFEGUARD_THREAD_ENABLE": {
+            "default": "false",
+            "description": "Create one thread for each job"
+        }
     }
 )
 
@@ -90,6 +94,7 @@ LIFEGUARD_EMAIL_SMTP_USER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_US
 LIFEGUARD_EMAIL_SMTP_PASSWD = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PASSWD")
 LIFEGUARD_EMAIL_SMTP_SERVER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_SERVER")
 LIFEGUARD_EMAIL_SMTP_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PORT")
+LIFEGUARD_THREAD_ENABLE = SETTINGS_MANAGER.read_value("LIFEGUARD_THREAD_ENABLE")
 
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
 HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")
