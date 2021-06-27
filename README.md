@@ -115,6 +115,8 @@ Set users in lifeguard context like in the example:
 
 ```
 # in lifeguard_settings.py
+from lifeguard.auth import BASIC_AUTH_METHOD
+
 def setup(lifeguard_context):
     lifeguard_context.auth_method = BASIC_AUTH_METHOD
     lifeguard_context.users = [{"username": "test", "password": "pass"}]
