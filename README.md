@@ -113,7 +113,7 @@ To see all settings avaiable run command:
 
 Set users in lifeguard context like in the example:
 
-```
+```python
 # in lifeguard_settings.py
 from lifeguard.auth import BASIC_AUTH_METHOD
 
