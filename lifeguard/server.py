@@ -4,7 +4,7 @@ from datetime import datetime
 
 from flask import Flask, make_response
 
-from lifeguard.controllers import custom_controllers
+from lifeguard.controllers import custom_controllers, login_required
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.repositories import ValidationRepository
 from lifeguard.validations import VALIDATIONS, ValidationResponseEncoder
@@ -19,6 +19,7 @@ def make_json_response(content):
 
 
 @APP.route("/lifeguard/validations/<validation>", methods=["GET"])
+@login_required
 def get_validation(validation):
     repository = ValidationRepository()
     result = repository.fetch_last_validation_result(validation)
@@ -26,6 +27,7 @@ def get_validation(validation):
 
 
 @APP.route("/lifeguard/validations/<validation>/execute", methods=["POST"])
+@login_required
 def execute_validation(validation):
     try:
         result = VALIDATIONS[validation]["ref"]()
