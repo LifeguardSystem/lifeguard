@@ -8,10 +8,14 @@ from lifeguard.controllers import (
     configure_controller,
     render_template,
     Request,
+    login_required,
 )
 from tests.fixtures.controllers.hello_controller import hello
 
 mock_flask_request = MagicMock(name="flask_request")
+
+MOCK_BASIC_AUTH = MagicMock(name="basic_auth")
+MOCK_AUTHENTICATION_METHODS = {"basic_auth": MOCK_BASIC_AUTH}
 
 
 class TestControllers(unittest.TestCase):
@@ -146,3 +150,29 @@ class TestControllers(unittest.TestCase):
         self.assertEqual("method", request.method)
         self.assertEqual("args", request.args)
         self.assertEqual("values", request.values)
+
+    @patch("lifeguard.controllers.AUTHENTICATION_METHODS", MOCK_AUTHENTICATION_METHODS)
+    @patch("lifeguard.controllers.LIFEGUARD_CONTEXT")
+    def test_login_required_wrap_controller(self, mock_lifeguard_context):
+
+        mock_lifeguard_context.auth_method = "basic_auth"
+        MOCK_AUTHENTICATION_METHODS["basic_auth"].return_value = False
+
+        a_function = MagicMock(name="a_function")
+        wrapped = login_required(a_function)
+
+        self.assertFalse(wrapped())
+        MOCK_AUTHENTICATION_METHODS["basic_auth"].assert_called_with((), {}, a_function)
+
+    @patch("lifeguard.controllers.AUTHENTICATION_METHODS", MOCK_AUTHENTICATION_METHODS)
+    @patch("lifeguard.controllers.LIFEGUARD_CONTEXT")
+    def test_login_required_not_wrap_controller(self, mock_lifeguard_context):
+
+        mock_lifeguard_context.auth_method = None
+
+        a_function = MagicMock(name="a_function")
+        a_function.return_value = 1
+        wrapped = login_required(a_function)
+
+        self.assertEqual(wrapped(), 1)
+        MOCK_AUTHENTICATION_METHODS["basic_auth"].assert_not_called()

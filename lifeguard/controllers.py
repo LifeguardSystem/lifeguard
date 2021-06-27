@@ -8,6 +8,8 @@ from flask import Blueprint
 from flask import Response as FlaskResponse
 from flask import request as flask_request
 
+from lifeguard.auth import AUTHENTICATION_METHODS
+from lifeguard.context import LIFEGUARD_CONTEXT
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import LIFEGUARD_DIRECTORY
 
@@ -109,10 +111,27 @@ class Response:
         self._data = value
 
 
+def login_required(function):
+    """
+    Decorator for login
+    """
+
+    @wraps(function)
+    def wrapped(*args, **kwargs):
+
+        if LIFEGUARD_CONTEXT.auth_method in AUTHENTICATION_METHODS:
+            return AUTHENTICATION_METHODS[LIFEGUARD_CONTEXT.auth_method](
+                args, kwargs, function
+            )
+        return function(*args, **kwargs)
+
+    return wrapped
+
+
 def register_custom_controller(path, function, options):
     endpoint = options.pop("endpoint", function.__name__)
     custom_controllers.add_url_rule(
-        path, endpoint, configure_controller(function), **options
+        path, endpoint, configure_controller(login_required(function)), **options
     )
 
 
