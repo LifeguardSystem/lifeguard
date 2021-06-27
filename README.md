@@ -103,3 +103,18 @@ To see all settings avaiable run command:
 
 `lifeguard -d`
 
+
+## Authentication
+
+### Builtin Methods
+
+#### Basic Authentication
+
+Set users in lifeguard context like in the example:
+
+```
+# in lifeguard_settings.py
+def setup(lifeguard_context):
+    lifeguard_context.auth_method = BASIC_AUTH_METHOD
+    lifeguard_context.users = [{"username": "test", "password": "pass"}]
+```
