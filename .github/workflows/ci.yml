@@ -20,6 +20,9 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         make deps
+    - name: Run Black
+      run: |
+        make black-ci
     - name: Test with nose2
       run: |
         make test
