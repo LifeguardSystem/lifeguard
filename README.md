@@ -104,6 +104,74 @@ To see all settings avaiable run command:
 
 `lifeguard -d`
 
+## Builtin Endpoints 
+
+### Recover Status
+
+__To get global status and all validations.__
+
+`GET /lifeguard/status/complete`
+
+```json
+{
+
+    "status": "NORMAL",
+    "validations": [
+        {
+            "validation_name": "pudim",
+            "status": "NORMAL",
+            "details": {
+                "NORMAL": 200
+            },
+            "settings": {
+                "notification": {
+                    "notify": true
+                }
+            },
+            "last_execution": "2021-06-15T10:46"
+        },
+        {
+            "validation_name": "my site",
+            "status": "NORMAL",
+            "details": {
+                "NORMAL": 200
+            },
+            "settings": {
+                "notification": {
+                    "notify": true
+                }
+            },
+            "last_execution": "2021-06-15T10:46"
+        }
+    ]
+}
+```
+
+__To get global status and only non normal validations.__
+
+`GET /lifeguard/status`
+
+```json
+{
+
+    "status": "PROBLEM",
+    "validations": [
+        {
+            "validation_name": "my site",
+            "status": "PROBLEM",
+            "details": {
+                "NORMAL": 200
+            },
+            "settings": {
+                "notification": {
+                    "notify": true
+                }
+            },
+            "last_execution": "2021-06-15T10:46"
+        }
+    ]
+}
+```
 
 ## Authentication
 
