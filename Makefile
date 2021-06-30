@@ -9,5 +9,9 @@ black:
 	black lifeguard
 	black tests
 
+black-ci:
+	black --check lifeguard
+	black --check tests
+
 clean:
 	find . -iname "*.pyc" | xargs rm
