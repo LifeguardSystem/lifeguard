@@ -40,6 +40,7 @@ class TestValidations(unittest.TestCase):
         load_validations()
         response = VALIDATIONS["simple_validation"]["ref"]()
         self.assertEqual(response.status, NORMAL)
+        self.assertEqual(VALIDATIONS["simple_validation"]["settings"], {})
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")

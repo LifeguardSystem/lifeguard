@@ -148,6 +148,7 @@ def validation(description=None, actions=None, schedule=None, settings=None):
             "description": description,
             "actions": actions,
             "schedule": schedule,
+            "settings": settings,
         }
 
         return wrapped
