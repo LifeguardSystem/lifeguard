@@ -10,8 +10,8 @@ black:
 	black tests
 
 black-ci:
-	black --check lifeguard
-	black --check tests
+	black --check --diff lifeguard
+	black --check --diff tests
 
 clean:
 	find . -iname "*.pyc" | xargs rm
