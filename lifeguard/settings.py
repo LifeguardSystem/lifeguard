@@ -33,7 +33,16 @@ class SettingsManager(object):
     @staticmethod
     def __set_type(setting, value):
         """
-        Convert value to explict type
+        Convert setting value to explict type.
+        Allowed types: int, float, str, bool.
+
+
+            Parameters:
+                    setting (dict): Value of the type to convert
+                    value (object): Value to be converted
+
+            Returns:
+                    value (str): the value in the specified type when type is allowed
         """
         if setting["type"] in [int, str, float]:
             return setting["type"](value)

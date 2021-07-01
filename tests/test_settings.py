@@ -72,7 +72,7 @@ class SettingsTest(unittest.TestCase):
         current_value = settings.read_value("LIFEGUARD_SERVER_PORT")
         self.assertEqual(current_value, "5567")
 
-    def test_get_default_value_with_bool_type_for_dynamic_attribute(self):
+    def test_get_default_value_with_declared_type_for_dynamic_attribute(self):
         settings = SettingsManager(
             {
                 "BOOL_SETTING": {
