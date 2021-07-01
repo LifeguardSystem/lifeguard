@@ -2,7 +2,6 @@
 Lifeguard core settings
 """
 import re
-import sys
 from os import environ
 
 
@@ -19,7 +18,10 @@ class SettingsManager(object):
 
     def __get_value(self, name):
         options = self.settings[name]
-        return environ.get(name, options["default"])
+        value = environ.get(name, options["default"])
+        if "type" in options:
+            return self.__set_type(options, value)
+        return value
 
     def __search_dynamic_attribute(self, name):
         for entry in self.settings:
@@ -27,6 +29,17 @@ class SettingsManager(object):
                 return environ.get(name, self.settings[entry]["default"])
 
         raise AttributeNotFoundInSettings("{} not found".format(name))
+
+    @staticmethod
+    def __set_type(setting, value):
+        """
+        Convert value to explict type
+        """
+        if setting["type"] in [int, str, float]:
+            return setting["type"](value)
+        elif setting["type"] == bool:
+            return str(value).lower() == "true"
+        return value
 
     def read_value(self, name):
         """
@@ -42,6 +55,7 @@ SETTINGS_MANAGER = SettingsManager(
     {
         "LIFEGUARD_SERVER_PORT": {
             "default": "5567",
+            "type": int,
             "description": "Lifeguard server port number",
         },
         "LIFEGUARD_DIRECTORY": {
