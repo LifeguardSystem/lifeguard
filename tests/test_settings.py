@@ -5,6 +5,7 @@ from unittest.mock import patch, call
 from lifeguard.settings import (
     LIFEGUARD_SERVER_PORT,
     LIFEGUARD_DIRECTORY,
+    LIFEGUARD_RUN_ONLY_VALIDATIONS,
     LOG_LEVEL,
     SETTINGS_MANAGER,
     SettingsManager,
@@ -34,6 +35,13 @@ class SettingsTest(unittest.TestCase):
             "Location of validations and others resources",
         )
 
+    def test_lifeguard_run_only_validations_default(self):
+        self.assertEqual(LIFEGUARD_RUN_ONLY_VALIDATIONS, [])
+        self.assertEqual(
+            SETTINGS_MANAGER.settings["LIFEGUARD_RUN_ONLY_VALIDATIONS"]["description"],
+            "A comma separated list with validations name to be run",
+        )
+
     def test_get_default_value_for_dynamic_attribute(self):
         settings = SettingsManager(
             {
@@ -57,7 +65,6 @@ class SettingsTest(unittest.TestCase):
                 }
             }
         )
-
         self.assertEqual(settings.read_value("DYNAMIC_TEST_ATTRIBUTE"), "from env")
         mock_environ.get.assert_has_calls(
             [

@@ -54,6 +54,35 @@ class TestValidations(unittest.TestCase):
         )
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch(
+        "lifeguard.validations.LIFEGUARD_RUN_ONLY_VALIDATIONS",
+        ["simple_with_action_validation"],
+    )
+    @patch("lifeguard.validations.logger")
+    def test_execute_validation_because_in_list(self, mock_logger):
+        load_validations()
+        self.assertIsNotNone(VALIDATIONS["simple_with_action_validation"]["ref"]())
+        mock_logger.info.assert_called_with(
+            "executing action %s with result %s...",
+            "simple_action",
+            "{'validation_name': 'simple_with_action_validation', 'status': 'NORMAL', 'details': {}, 'settings': None}",
+        )
+
+    @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch(
+        "lifeguard.validations.LIFEGUARD_RUN_ONLY_VALIDATIONS",
+        ["simple_validation"],
+    )
+    @patch("lifeguard.validations.logger")
+    def test_not_execute_validation_because_not_in_list(self, mock_logger):
+        load_validations()
+        self.assertIsNone(VALIDATIONS["simple_with_action_validation"]["ref"]())
+        mock_logger.info.assert_called_with(
+            "validation %s not in LIFEGUARD_RUN_ONLY_VALIDATIONS",
+            "simple_with_action_validation",
+        )
+
+    @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")
     @patch("lifeguard.validations.traceback")
     def test_execute_validation_with_invalid_action(self, mock_traceback, mock_logger):

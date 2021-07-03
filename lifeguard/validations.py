@@ -5,7 +5,7 @@ from json import JSONEncoder
 from functools import wraps
 
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.settings import LIFEGUARD_DIRECTORY
+from lifeguard.settings import LIFEGUARD_DIRECTORY, LIFEGUARD_RUN_ONLY_VALIDATIONS
 
 VALIDATIONS = {}
 
@@ -125,6 +125,16 @@ def validation(description=None, actions=None, schedule=None, settings=None):
         @wraps(decorated)
         def wrapped(*args, **kwargs):
             try:
+
+                if LIFEGUARD_RUN_ONLY_VALIDATIONS and (
+                    decorated.__name__ not in LIFEGUARD_RUN_ONLY_VALIDATIONS
+                ):
+                    logger.info(
+                        "validation %s not in LIFEGUARD_RUN_ONLY_VALIDATIONS",
+                        decorated.__name__,
+                    )
+                    return None
+
                 result = decorated(*args, **kwargs)
                 for action in actions or []:
                     logger.info(
