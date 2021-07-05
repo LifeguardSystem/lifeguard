@@ -87,6 +87,10 @@ SETTINGS_MANAGER = SettingsManager(
             "default": "",
             "description": "A comma separated list with validations name to be run",
         },
+        "LIFEGUARD_SKIP_VALIDATIONS": {
+            "default": "",
+            "description": "A comma separated list with validations name to be skipped",
+        },
     }
 )
 
@@ -104,8 +108,11 @@ HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")
 HTTPS_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTPS_PROXY")
 
 _validations = SETTINGS_MANAGER.read_value("LIFEGUARD_RUN_ONLY_VALIDATIONS").split(",")
+_validations = SETTINGS_MANAGER.read_value("LIFEGUARD_SKIP_VALIDATIONS").split(",")
 
 # TODO: changes this after #27 was done
 LIFEGUARD_RUN_ONLY_VALIDATIONS = [
     validation for validation in _validations if validation
 ]
+
+LIFEGUARD_SKIP_VALIDATIONS = [validation for validation in _validations if validation]

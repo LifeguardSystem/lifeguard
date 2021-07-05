@@ -5,7 +5,11 @@ from json import JSONEncoder
 from functools import wraps
 
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.settings import LIFEGUARD_DIRECTORY, LIFEGUARD_RUN_ONLY_VALIDATIONS
+from lifeguard.settings import (
+    LIFEGUARD_DIRECTORY,
+    LIFEGUARD_RUN_ONLY_VALIDATIONS,
+    LIFEGUARD_SKIP_VALIDATIONS,
+)
 
 VALIDATIONS = {}
 
@@ -131,6 +135,15 @@ def validation(description=None, actions=None, schedule=None, settings=None):
                 ):
                     logger.info(
                         "validation %s not in LIFEGUARD_RUN_ONLY_VALIDATIONS",
+                        decorated.__name__,
+                    )
+                    return None
+
+                if LIFEGUARD_SKIP_VALIDATIONS and (
+                    decorated.__name__ in LIFEGUARD_SKIP_VALIDATIONS
+                ):
+                    logger.info(
+                        "validation %s in LIFEGUARD_SKIP_VALIDATIONS",
                         decorated.__name__,
                     )
                     return None
