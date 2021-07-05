@@ -6,6 +6,7 @@ from lifeguard.settings import (
     LIFEGUARD_SERVER_PORT,
     LIFEGUARD_DIRECTORY,
     LIFEGUARD_RUN_ONLY_VALIDATIONS,
+    LIFEGUARD_SKIP_VALIDATIONS,
     LOG_LEVEL,
     SETTINGS_MANAGER,
     SettingsManager,
@@ -40,6 +41,13 @@ class SettingsTest(unittest.TestCase):
         self.assertEqual(
             SETTINGS_MANAGER.settings["LIFEGUARD_RUN_ONLY_VALIDATIONS"]["description"],
             "A comma separated list with validations name to be run",
+        )
+
+    def test_lifeguard_skip_validations_default(self):
+        self.assertEqual(LIFEGUARD_SKIP_VALIDATIONS, [])
+        self.assertEqual(
+            SETTINGS_MANAGER.settings["LIFEGUARD_SKIP_VALIDATIONS"]["description"],
+            "A comma separated list with validations name to be skipped",
         )
 
     def test_get_default_value_for_dynamic_attribute(self):
