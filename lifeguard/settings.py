@@ -9,7 +9,11 @@ class AttributeNotFoundInSettings(Exception):
     """Raised when the entry not found in settings"""
 
 
-class SettingsManager(object):
+class SettingsManager:
+    """
+    Settings manager
+    """
+
     def __init__(self, settings):
         self.settings = settings
 
@@ -102,6 +106,14 @@ SETTINGS_MANAGER = SettingsManager(
             "default": "smtp_port",
             "description": "SMTP port used in email action",
         },
+        "LIFEGUARD_RUN_ONLY_VALIDATIONS": {
+            "default": "",
+            "description": "A comma separated list with validations name to be run",
+        },
+        "LIFEGUARD_SKIP_VALIDATIONS": {
+            "default": "",
+            "description": "A comma separated list with validations name to be skipped",
+        },
     }
 )
 
@@ -113,6 +125,16 @@ LIFEGUARD_EMAIL_SMTP_PASSWD = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_
 LIFEGUARD_EMAIL_SMTP_SERVER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_SERVER")
 LIFEGUARD_EMAIL_SMTP_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PORT")
 
+
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
 HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")
 HTTPS_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTPS_PROXY")
+
+# TODO: changes this after #27 was done
+_validations = SETTINGS_MANAGER.read_value("LIFEGUARD_RUN_ONLY_VALIDATIONS").split(",")
+LIFEGUARD_RUN_ONLY_VALIDATIONS = [
+    validation for validation in _validations if validation
+]
+
+_validations = SETTINGS_MANAGER.read_value("LIFEGUARD_SKIP_VALIDATIONS").split(",")
+LIFEGUARD_SKIP_VALIDATIONS = [validation for validation in _validations if validation]
