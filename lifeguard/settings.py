@@ -36,7 +36,6 @@ class SettingsManager(object):
         Convert setting value to explict type.
         Allowed types: int, float, str, bool.
 
-
             Parameters:
                     setting (dict): Value of the type to convert
                     value (object): Value to be converted
