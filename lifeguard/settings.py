@@ -46,7 +46,7 @@ class SettingsManager:
                     value (object): Value to be converted
 
             Returns:
-                    value (str): the value in the specified type when type is allowed
+                    value (object): the value in the specified type when type is allowed
         """
         _format_funcs = {
             "bool": lambda x: str(x).lower() == "true",
