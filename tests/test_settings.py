@@ -43,6 +43,36 @@ class SettingsTest(unittest.TestCase):
             "A comma separated list with validations name to be run",
         )
 
+    def test_get_allowed_validations_returns_1_validation(self):
+        settings = SettingsManager(
+            {
+                "LIFEGUARD_RUN_ONLY_VALIDATIONS": {
+                    "default": "validation1",
+                    "type": "validation_list",
+                    "description": "allowed validations",
+                }
+            }
+        )
+        self.assertEqual(
+            ["validation1"],
+            settings.read_value("LIFEGUARD_RUN_ONLY_VALIDATIONS"),
+        )
+
+    def test_get_allowed_validations_returns_2_validations(self):
+        settings = SettingsManager(
+            {
+                "LIFEGUARD_RUN_ONLY_VALIDATIONS": {
+                    "default": "validation1,validation2",
+                    "type": "validation_list",
+                    "description": "allowed validations",
+                }
+            }
+        )
+        self.assertEqual(
+            ["validation1", "validation2"],
+            settings.read_value("LIFEGUARD_RUN_ONLY_VALIDATIONS"),
+        )
+
     def test_lifeguard_skip_validations_default(self):
         self.assertEqual(LIFEGUARD_SKIP_VALIDATIONS, [])
         self.assertEqual(
@@ -67,7 +97,7 @@ class SettingsTest(unittest.TestCase):
             {
                 "LIFEGUARD_SERVER_PORT": {
                     "default": "5567",
-                    "type": int,
+                    "type": "int",
                     "description": "Lifeguard server port number",
                 }
             }
@@ -93,7 +123,7 @@ class SettingsTest(unittest.TestCase):
             {
                 "BOOL_SETTING": {
                     "default": "false",
-                    "type": bool,
+                    "type": "bool",
                     "description": "dynammic descritpion",
                 }
             }
@@ -126,7 +156,7 @@ class SettingsTest(unittest.TestCase):
             {
                 "DYNAMIC_TEST_ATTRIBUTE": {
                     "default": "default_value",
-                    "type": bool,
+                    "type": "bool",
                     "description": "dynammic descritpion",
                 }
             }
