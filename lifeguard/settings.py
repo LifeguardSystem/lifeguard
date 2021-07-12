@@ -22,7 +22,10 @@ class SettingsManager:
 
     def __get_value(self, name):
         options = self.settings[name]
-        return environ.get(name, options["default"])
+        value = environ.get(name, options["default"])
+        if "type" in options:
+            return self.__set_type(options, value)
+        return value
 
     def __search_dynamic_attribute(self, name):
         for entry in self.settings:
@@ -30,6 +33,34 @@ class SettingsManager:
                 return environ.get(name, self.settings[entry]["default"])
 
         raise AttributeNotFoundInSettings("{} not found".format(name))
+
+    @staticmethod
+    def __set_type(setting, value):
+        """
+        Convert setting value to explict type.
+        Types should be passed as string.
+        Allowed types: int, float, str, bool, validation_list.
+
+            Parameters:
+                    setting (dict): Value of the type to convert
+                    value (object): Value to be converted
+
+            Returns:
+                    value (object): the value in the specified type when type is allowed
+        """
+        _format_funcs = {
+            "bool": lambda x: str(x).lower() == "true",
+            "validation_list": lambda x: [
+                validation for validation in x.split(",") if validation
+            ],
+            "int": int,
+            "float": float,
+            "str": str,
+        }
+        if setting["type"] in _format_funcs.keys():
+            return _format_funcs[setting["type"]](value)
+
+        return value
 
     def read_value(self, name):
         """
@@ -45,6 +76,7 @@ SETTINGS_MANAGER = SettingsManager(
     {
         "LIFEGUARD_SERVER_PORT": {
             "default": "5567",
+            "type": "int",
             "description": "Lifeguard server port number",
         },
         "LIFEGUARD_DIRECTORY": {
@@ -85,10 +117,12 @@ SETTINGS_MANAGER = SettingsManager(
         },
         "LIFEGUARD_RUN_ONLY_VALIDATIONS": {
             "default": "",
+            "type": "validation_list",
             "description": "A comma separated list with validations name to be run",
         },
         "LIFEGUARD_SKIP_VALIDATIONS": {
             "default": "",
+            "type": "validation_list",
             "description": "A comma separated list with validations name to be skipped",
         },
     }
@@ -102,16 +136,11 @@ LIFEGUARD_EMAIL_SMTP_PASSWD = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_
 LIFEGUARD_EMAIL_SMTP_SERVER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_SERVER")
 LIFEGUARD_EMAIL_SMTP_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PORT")
 
-
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
 HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")
 HTTPS_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTPS_PROXY")
 
-# TODO: changes this after #27 was done
-_validations = SETTINGS_MANAGER.read_value("LIFEGUARD_RUN_ONLY_VALIDATIONS").split(",")
-LIFEGUARD_RUN_ONLY_VALIDATIONS = [
-    validation for validation in _validations if validation
-]
-
-_validations = SETTINGS_MANAGER.read_value("LIFEGUARD_SKIP_VALIDATIONS").split(",")
-LIFEGUARD_SKIP_VALIDATIONS = [validation for validation in _validations if validation]
+LIFEGUARD_RUN_ONLY_VALIDATIONS = SETTINGS_MANAGER.read_value(
+    "LIFEGUARD_RUN_ONLY_VALIDATIONS"
+)
+LIFEGUARD_SKIP_VALIDATIONS = SETTINGS_MANAGER.read_value("LIFEGUARD_SKIP_VALIDATIONS")
