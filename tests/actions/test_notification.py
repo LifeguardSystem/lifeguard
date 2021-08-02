@@ -150,3 +150,28 @@ class TestActionNotification(unittest.TestCase):
         notify_in_thread(self.mock_validation_response, self.mock_settings)
 
         mock_implementation.update_thread.assert_called_with("thread", "{}", {})
+
+    @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
+    @patch("lifeguard.actions.notifications.json")
+    @patch("lifeguard.actions.notifications.NotificationRepository")
+    @patch("lifeguard.actions.notifications.logger", mock_logger)
+    def test_should_not_update_thread_if_into_interval(
+        self, mock_notification_repository, mock_json
+    ):
+        notification_repository_instance = MagicMock(name="repository")
+        mock_notification_repository.return_value = notification_repository_instance
+        notification_repository_instance.fetch_last_notification_for_a_validation.return_value = NotificationStatus(
+            "validation", {"not implemented": "thread"}
+        )
+
+        mock_json.dumps.return_value = "{}"
+
+        self.mock_validation_response.status = PROBLEM
+        self.mock_validation_response.details = {}
+
+        notify_in_thread(
+            self.mock_validation_response,
+            {"notification": {"update_thread_interval": 60}},
+        )
+
+        mock_implementation.update_thread.assert_not_called()

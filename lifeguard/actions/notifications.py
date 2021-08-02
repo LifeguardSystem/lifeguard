@@ -1,6 +1,7 @@
 """
 Base of action used to notification
 """
+from datetime import datetime
 import json
 
 from lifeguard import NORMAL, PROBLEM
@@ -62,8 +63,14 @@ def __send_notification_in_thread(
         notification_method.close_thread(thread_id, content, settings)
         last_notification_status.close()
     else:
-        notification_method.update_thread(thread_id, content, settings)
-        last_notification_status.update()
+        last_notification_was_in_seconds = (
+            datetime.now() - last_notification_status.last_notification
+        ).seconds
+        interval = settings.get("notification", {}).get("update_thread_interval", 0)
+        if last_notification_was_in_seconds >= interval:
+            logger.debug("updating notification")
+            notification_method.update_thread(thread_id, content, settings)
+            last_notification_status.update()
 
 
 def notify_in_single_message(validation_response, settings):
