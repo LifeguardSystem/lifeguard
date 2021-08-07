@@ -2,13 +2,16 @@
 Lifeguard validation core
 """
 import importlib
-import os
 import sys
 
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.repositories import declare_implementation
-from lifeguard.settings import LIFEGUARD_DIRECTORY, SETTINGS_MANAGER
+from lifeguard.settings import (
+    LIFEGUARD_DIRECTORY,
+    SETTINGS_MANAGER,
+    LIFEGUARD_CONTROLLERS_ASSETS_ENABLED,
+)
 from lifeguard.controllers import load_custom_controllers
+from lifeguard.controllers.assets import load_assets_controllers
 from lifeguard.validations import load_validations
 
 NORMAL = "NORMAL"
@@ -58,6 +61,10 @@ def setup(lifeguard_context):
             plugin.init(lifeguard_context)
 
     load_custom_controllers()
+
+    if LIFEGUARD_CONTROLLERS_ASSETS_ENABLED:
+        load_assets_controllers()
+
     load_validations()
 
     lifeguard_settings.setup(lifeguard_context)

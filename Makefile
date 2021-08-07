@@ -3,7 +3,7 @@ deps:
 	pip3 install -r requirements.dev.txt
 
 test:
-	nose2 -v --with-coverage --coverage-report html --coverage-report term
+	nose2 -v --with-coverage --coverage-report html --coverage-report term --coverage-report xml
 
 black:
 	black lifeguard

@@ -1,7 +1,11 @@
+"""
+Implementation of contollers helpers
+"""
 import os
 import sys
 import traceback
 from functools import wraps
+from os.path import join
 
 import jinja2
 from flask import Blueprint
@@ -16,7 +20,7 @@ from lifeguard.settings import LIFEGUARD_DIRECTORY
 custom_controllers = Blueprint("custom", __name__)
 
 
-def render_template(template, searchpath, data=None):
+def build_content_from_template(template, searchpath, data=None):
 
     if not data:
         data = {}
@@ -25,6 +29,27 @@ def render_template(template, searchpath, data=None):
     template_env = jinja2.Environment(loader=template_loader)
     template = template_env.get_template(template)
     return template.render(**data)
+
+
+def render_template(template, data=None, searchpath=None):
+    """
+    render template used in contollers
+    """
+
+    if not searchpath:
+        searchpath = str(join(LIFEGUARD_DIRECTORY, "templates"))
+
+    response = Response()
+    response.template = template
+    response.template_searchpath = searchpath
+    response.data = data
+    return response
+
+
+def send_status(status):
+    response = Response()
+    response.status = status
+    return response
 
 
 class Request:
@@ -158,7 +183,7 @@ def load_custom_controllers():
 def treat_response(response):
     content = response.content
     if response.template:
-        content = render_template(
+        content = build_content_from_template(
             response.template, response.template_searchpath, data=response.data
         )
 

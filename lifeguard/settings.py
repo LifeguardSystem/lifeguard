@@ -125,6 +125,11 @@ SETTINGS_MANAGER = SettingsManager(
             "type": "validation_list",
             "description": "A comma separated list with validations name to be skipped",
         },
+        "LIFEGUARD_CONTROLLERS_ASSETS_ENABLED": {
+            "default": "true",
+            "type": "bool",
+            "description": "Enable assets controller",
+        },
     }
 )
 
@@ -135,6 +140,10 @@ LIFEGUARD_EMAIL_SMTP_USER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_US
 LIFEGUARD_EMAIL_SMTP_PASSWD = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PASSWD")
 LIFEGUARD_EMAIL_SMTP_SERVER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_SERVER")
 LIFEGUARD_EMAIL_SMTP_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PORT")
+
+LIFEGUARD_CONTROLLERS_ASSETS_ENABLED = SETTINGS_MANAGER.read_value(
+    "LIFEGUARD_CONTROLLERS_ASSETS_ENABLED"
+)
 
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
 HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")

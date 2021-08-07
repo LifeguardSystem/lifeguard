@@ -6,9 +6,11 @@ from lifeguard.controllers import (
     load_custom_controllers,
     treat_response,
     configure_controller,
-    render_template,
+    build_content_from_template,
     Request,
     login_required,
+    render_template,
+    send_status,
 )
 from tests.fixtures.controllers.hello_controller import hello
 
@@ -31,11 +33,11 @@ class TestControllers(unittest.TestCase):
         self.assertEqual("hello", hello())
 
     @patch("lifeguard.controllers.FlaskResponse")
-    @patch("lifeguard.controllers.render_template")
+    @patch("lifeguard.controllers.build_content_from_template")
     def test_treat_response_with_template(
-        self, mock_render_template, mock_flask_response
+        self, mock_build_content_from_template, mock_flask_response
     ):
-        mock_render_template.return_value = "template rendered"
+        mock_build_content_from_template.return_value = "template rendered"
 
         response = Response()
         response.template = "template.html"
@@ -46,14 +48,16 @@ class TestControllers(unittest.TestCase):
         mock_flask_response.assert_called_with(
             "template rendered", content_type="text/html", status=200
         )
-        mock_render_template.assert_called_with("template.html", "/templates", data={})
+        mock_build_content_from_template.assert_called_with(
+            "template.html", "/templates", data={}
+        )
 
     @patch("lifeguard.controllers.FlaskResponse")
-    @patch("lifeguard.controllers.render_template")
+    @patch("lifeguard.controllers.build_content_from_template")
     def test_treat_response_without_template(
-        self, mock_render_template, mock_flask_response
+        self, mock_build_content_from_template, mock_flask_response
     ):
-        mock_render_template.return_value = "template rendered"
+        mock_build_content_from_template.return_value = "template rendered"
 
         response = Response()
         response.content = "body {}"
@@ -65,7 +69,7 @@ class TestControllers(unittest.TestCase):
         mock_flask_response.assert_called_with(
             "body {}", content_type="text/css", status=404
         )
-        mock_render_template.assert_not_called()
+        mock_build_content_from_template.assert_not_called()
 
     def test_configure_controller_success_with_string(self):
         def test():
@@ -99,7 +103,7 @@ class TestControllers(unittest.TestCase):
         )
 
     @patch("lifeguard.controllers.jinja2")
-    def test_render_template(self, mock_jinja2):
+    def test_build_content_from_template(self, mock_jinja2):
 
         template_loader = MagicMock(name="template_loader")
         mock_jinja2.FileSystemLoader.return_value = template_loader
@@ -110,14 +114,14 @@ class TestControllers(unittest.TestCase):
         template = MagicMock(name="template")
         template_env.get_template.return_value = template
 
-        render_template("template", "searchpath")
+        build_content_from_template("template", "searchpath")
 
         mock_jinja2.FileSystemLoader.assert_called_with(searchpath="searchpath")
         mock_jinja2.Environment.assert_called_with(loader=template_loader)
         template.render.assert_called()
 
     @patch("lifeguard.controllers.jinja2")
-    def test_render_template_with_data(self, mock_jinja2):
+    def test_build_content_from_template_with_data(self, mock_jinja2):
 
         template_loader = MagicMock(name="template_loader")
         mock_jinja2.FileSystemLoader.return_value = template_loader
@@ -128,7 +132,7 @@ class TestControllers(unittest.TestCase):
         template = MagicMock(name="template")
         template_env.get_template.return_value = template
 
-        render_template("template", "searchpath", data={"test": True})
+        build_content_from_template("template", "searchpath", data={"test": True})
 
         mock_jinja2.FileSystemLoader.assert_called_with(searchpath="searchpath")
         mock_jinja2.Environment.assert_called_with(loader=template_loader)
@@ -176,3 +180,56 @@ class TestControllers(unittest.TestCase):
 
         self.assertEqual(wrapped(), 1)
         MOCK_AUTHENTICATION_METHODS["basic_auth"].assert_not_called()
+
+    @patch("lifeguard.controllers.join")
+    def test_render_template_with_default_params(self, mock_join):
+        mock_join.return_value = "templates"
+
+        response = render_template("template.html")
+
+        mock_join.assert_called_with(".", "templates")
+        self.assertDictEqual(
+            response.__dict__,
+            {
+                "_content": None,
+                "_content_type": "text/html",
+                "_data": None,
+                "_status": 200,
+                "_template": "template.html",
+                "_template_searchpath": "templates",
+            },
+        )
+
+    def test_render_template_with_params(self):
+
+        response = render_template(
+            "template.html", data={"test": "test"}, searchpath="searchpath"
+        )
+
+        self.assertDictEqual(
+            response.__dict__,
+            {
+                "_content": None,
+                "_content_type": "text/html",
+                "_data": {"test": "test"},
+                "_status": 200,
+                "_template": "template.html",
+                "_template_searchpath": "searchpath",
+            },
+        )
+
+    def test_send_status(self):
+
+        response = send_status(404)
+
+        self.assertDictEqual(
+            response.__dict__,
+            {
+                "_content": None,
+                "_content_type": "text/html",
+                "_data": {},
+                "_status": 404,
+                "_template": None,
+                "_template_searchpath": None,
+            },
+        )
