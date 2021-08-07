@@ -8,3 +8,4 @@ venv
 .mutmut-cache
 .nvimlog
 .idea
+coverage.xml
