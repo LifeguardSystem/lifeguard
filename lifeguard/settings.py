@@ -130,6 +130,10 @@ SETTINGS_MANAGER = SettingsManager(
             "type": "bool",
             "description": "Enable assets controller",
         },
+        "LIFEGUARD_SECRET_KEY": {
+            "default": "lifeguard_key",
+            "description": "Secret key used in session",
+        },
     }
 )
 
@@ -144,6 +148,8 @@ LIFEGUARD_EMAIL_SMTP_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_PO
 LIFEGUARD_CONTROLLERS_ASSETS_ENABLED = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_CONTROLLERS_ASSETS_ENABLED"
 )
+
+LIFEGUARD_SECRET_KEY = SETTINGS_MANAGER.read_value("LIFEGUARD_SECRET_KEY")
 
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
 HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")

@@ -8,6 +8,7 @@ from lifeguard.controllers import (
     configure_controller,
     build_content_from_template,
     Request,
+    Session,
     login_required,
     render_template,
     send_status,
@@ -154,6 +155,15 @@ class TestControllers(unittest.TestCase):
         self.assertEqual("method", request.method)
         self.assertEqual("args", request.args)
         self.assertEqual("values", request.values)
+
+    @patch("lifeguard.controllers.flask_session", spec={})
+    def test_session_proxy(self, mock_session):
+        session = Session()
+        session["user"] = "user"
+        mock_session.__setitem__.assert_called_with("user", "user")
+
+        mock_session.__getitem__.return_value = "result"
+        self.assertEqual(session["user"], "result")
 
     @patch("lifeguard.controllers.AUTHENTICATION_METHODS", MOCK_AUTHENTICATION_METHODS)
     @patch("lifeguard.controllers.LIFEGUARD_CONTEXT")

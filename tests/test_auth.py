@@ -37,8 +37,15 @@ class TestAuth(unittest.TestCase):
     @patch("lifeguard.auth.FlaskResponse")
     @patch("lifeguard.auth.flask_request", spec={})
     @patch("lifeguard.auth.basic_auth_login")
+    @patch("lifeguard.auth._get_credentials")
+    @patch("lifeguard.auth.flask_session", spec={})
     def test_basic_auth_login_required_implementation_call_function(
-        self, mock_login, mock_request, _mock_response
+        self,
+        mock_session,
+        mock_get_credentials,
+        mock_login,
+        mock_request,
+        _mock_response,
     ):
         args = MagicMock(name="args")
         kwargs = MagicMock(name="kwargs")
@@ -48,6 +55,7 @@ class TestAuth(unittest.TestCase):
         mock_request.headers.get.return_value = "returned_get"
 
         mock_login.return_value = True
+        mock_get_credentials.return_value = ("user", "pass")
 
         function.return_value = False
 
@@ -57,7 +65,9 @@ class TestAuth(unittest.TestCase):
 
         function.assert_called()
         mock_request.headers.get.assert_called_with("Authorization")
+        mock_get_credentials.assert_called_with("returned_get")
         mock_login.assert_called_with("returned_get")
+        mock_session.__setitem__.assert_called_with("user", "user")
 
     @patch("lifeguard.auth.FlaskResponse")
     @patch("lifeguard.auth.flask_request", spec={})

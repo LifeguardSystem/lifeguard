@@ -11,6 +11,7 @@ import jinja2
 from flask import Blueprint
 from flask import Response as FlaskResponse
 from flask import request as flask_request
+from flask import session as flask_session
 
 from lifeguard.auth import AUTHENTICATION_METHODS
 from lifeguard.context import LIFEGUARD_CONTEXT
@@ -50,6 +51,14 @@ def send_status(status):
     response = Response()
     response.status = status
     return response
+
+
+class Session:
+    def __getitem__(self, key):
+        return flask_session[key]
+
+    def __setitem__(self, key, value):
+        flask_session[key] = value
 
 
 class Request:
@@ -228,3 +237,4 @@ def controller(path, **options):
 
 
 request = Request()
+session = Session()
