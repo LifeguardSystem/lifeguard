@@ -47,7 +47,7 @@ class TestControllers(unittest.TestCase):
         treat_response(response)
 
         mock_flask_response.assert_called_with(
-            "template rendered", content_type="text/html", status=200
+            "template rendered", content_type="text/html", status=200, headers={}
         )
         mock_build_content_from_template.assert_called_with(
             "template.html", "/templates", data={}
@@ -68,7 +68,7 @@ class TestControllers(unittest.TestCase):
         treat_response(response)
 
         mock_flask_response.assert_called_with(
-            "body {}", content_type="text/css", status=404
+            "body {}", content_type="text/css", status=404, headers={}
         )
         mock_build_content_from_template.assert_not_called()
 
@@ -144,6 +144,7 @@ class TestControllers(unittest.TestCase):
         request = Request()
         mock_flask_request.json = "json"
         mock_flask_request.data = "data"
+        mock_flask_request.headers = "headers"
         mock_flask_request.form = "form"
         mock_flask_request.method = "method"
         mock_flask_request.args = "args"
@@ -151,6 +152,7 @@ class TestControllers(unittest.TestCase):
 
         self.assertEqual("json", request.json)
         self.assertEqual("data", request.data)
+        self.assertEqual("headers", request.headers)
         self.assertEqual("form", request.form)
         self.assertEqual("method", request.method)
         self.assertEqual("args", request.args)
@@ -204,6 +206,7 @@ class TestControllers(unittest.TestCase):
                 "_content": None,
                 "_content_type": "text/html",
                 "_data": None,
+                "_headers": None,
                 "_status": 200,
                 "_template": "template.html",
                 "_template_searchpath": "templates",
@@ -213,7 +216,10 @@ class TestControllers(unittest.TestCase):
     def test_render_template_with_params(self):
 
         response = render_template(
-            "template.html", data={"test": "test"}, searchpath="searchpath"
+            "template.html",
+            data={"test": "test"},
+            headers={"header1": "test"},
+            searchpath="searchpath",
         )
 
         self.assertDictEqual(
@@ -222,6 +228,7 @@ class TestControllers(unittest.TestCase):
                 "_content": None,
                 "_content_type": "text/html",
                 "_data": {"test": "test"},
+                "_headers": {"header1": "test"},
                 "_status": 200,
                 "_template": "template.html",
                 "_template_searchpath": "searchpath",
@@ -238,6 +245,7 @@ class TestControllers(unittest.TestCase):
                 "_content": None,
                 "_content_type": "text/html",
                 "_data": {},
+                "_headers": {},
                 "_status": 404,
                 "_template": None,
                 "_template_searchpath": None,

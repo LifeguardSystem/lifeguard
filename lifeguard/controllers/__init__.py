@@ -32,7 +32,7 @@ def build_content_from_template(template, searchpath, data=None):
     return template.render(**data)
 
 
-def render_template(template, data=None, searchpath=None):
+def render_template(template, data=None, headers=None, searchpath=None):
     """
     render template used in contollers
     """
@@ -44,6 +44,7 @@ def render_template(template, data=None, searchpath=None):
     response.template = template
     response.template_searchpath = searchpath
     response.data = data
+    response.headers = headers
     return response
 
 
@@ -71,6 +72,10 @@ class Request:
         return flask_request.data
 
     @property
+    def headers(self):
+        return flask_request.headers
+
+    @property
     def form(self):
         return flask_request.form
 
@@ -95,6 +100,7 @@ class Response:
         self._template_searchpath = None
         self._status = 200
         self._data = {}
+        self._headers = {}
 
     @property
     def content_type(self):
@@ -143,6 +149,14 @@ class Response:
     @data.setter
     def data(self, value):
         self._data = value
+
+    @property
+    def headers(self):
+        return self._headers
+
+    @headers.setter
+    def headers(self, value):
+        self._headers = value
 
 
 def login_required(function):
@@ -197,7 +211,10 @@ def treat_response(response):
         )
 
     return FlaskResponse(
-        content, content_type=response.content_type, status=response.status
+        content,
+        content_type=response.content_type,
+        status=response.status,
+        headers=response.headers,
     )
 
 
