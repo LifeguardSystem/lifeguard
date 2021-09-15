@@ -117,10 +117,28 @@ class TestValidations(unittest.TestCase):
     def test_execute_validation_with_invalid_action(self, mock_traceback, mock_logger):
         mock_traceback.format_exc.return_value = "traceback"
         load_validations()
-        VALIDATIONS["simple_with_invalid_action_validation"]["ref"]()
+        result = VALIDATIONS["simple_with_invalid_action_validation"]["ref"]()
         mock_logger.warning.assert_called_with(
             "validation error %s: %s",
             "simple_with_invalid_action_validation",
             "invalid_action() takes 0 positional arguments but 2 were given",
             extra={"traceback": "traceback"},
+        )
+        self.assertIsNone(result)
+
+    @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch("lifeguard.validations.traceback")
+    def test_execute_validation_with_on_exception_settings(self, mock_traceback):
+        mock_traceback.format_exc.return_value = "traceback"
+        load_validations()
+        result = VALIDATIONS["validation_with_on_exception_settings"]["ref"]()
+        self.assertEqual(
+            result.__dict__,
+            {
+                "_details": {"traceback": "traceback"},
+                "_last_execution": None,
+                "_settings": None,
+                "_status": "PROBLEM",
+                "_validation_name": "validation_with_on_exception_settings",
+            },
         )

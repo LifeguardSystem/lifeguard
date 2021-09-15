@@ -166,6 +166,30 @@ def validation(description=None, actions=None, schedule=None, settings=None):
                     extra={"traceback": traceback.format_exc()},
                 )
 
+                on_exception = (settings or {}).get("on_exception", {})
+                if on_exception:
+                    result = on_exception["result"]
+
+                    if (
+                        "append_traceback_on_details" in on_exception
+                        and on_exception["append_traceback_on_details"]
+                    ):
+                        result.details["traceback"] = traceback.format_exc()
+
+                    if (
+                        "rerun_actions" in on_exception
+                        and on_exception["rerun_actions"]
+                    ):
+                        for action in actions or []:
+                            logger.info(
+                                "executing action %s with result %s...",
+                                str(action.__name__),
+                                str(result),
+                            )
+                            action(result, settings)
+
+                    return result
+
         VALIDATIONS[decorated.__name__] = {
             "ref": wrapped,
             "description": description,
