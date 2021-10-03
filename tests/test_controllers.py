@@ -170,6 +170,9 @@ class TestControllers(unittest.TestCase):
         mock_session.__getitem__.return_value = "result"
         self.assertEqual(session["user"], "result")
 
+        session.get("user")
+        mock_session.get.assert_called_with("user")
+
     @patch("lifeguard.controllers.AUTHENTICATION_METHODS", MOCK_AUTHENTICATION_METHODS)
     @patch("lifeguard.controllers.LIFEGUARD_CONTEXT")
     def test_login_required_wrap_controller(self, mock_lifeguard_context):

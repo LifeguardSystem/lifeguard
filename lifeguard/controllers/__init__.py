@@ -62,6 +62,9 @@ class Session:
     def __setitem__(self, key, value):
         flask_session[key] = value
 
+    def get(self, key):
+        return flask_session.get(key)
+
 
 class Request:
     @property
