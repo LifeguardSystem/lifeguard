@@ -12,6 +12,7 @@ from lifeguard.controllers import (
     login_required,
     render_template,
     send_status,
+    register_custom_controller,
 )
 from tests.fixtures.controllers.hello_controller import hello
 
@@ -251,3 +252,31 @@ class TestControllers(unittest.TestCase):
                 "_template_searchpath": None,
             },
         )
+
+    @patch("lifeguard.controllers.login_required")
+    @patch("lifeguard.controllers.custom_controllers")
+    def test_skip_login(self, mock_custom_controllers, mock_login_required):
+        def login_function():
+            pass
+
+        register_custom_controller(
+            "/login", login_function, {"method": ["GET"], "skip_login": True}
+        )
+        mock_custom_controllers.add_url_rule.assert_called_with(
+            "/login", "login_function", ANY, method=["GET"]
+        )
+        mock_login_required.assert_not_called()
+
+    @patch("lifeguard.controllers.login_required")
+    @patch("lifeguard.controllers.custom_controllers")
+    def test_enable_login(self, mock_custom_controllers, mock_login_required):
+        def login_function():
+            pass
+
+        register_custom_controller(
+            "/login", login_function, {"method": ["GET"], "skip_login": False}
+        )
+        mock_custom_controllers.add_url_rule.assert_called_with(
+            "/login", "login_function", ANY, method=["GET"]
+        )
+        mock_login_required.assert_called()

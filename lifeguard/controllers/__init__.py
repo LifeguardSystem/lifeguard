@@ -166,7 +166,6 @@ def login_required(function):
 
     @wraps(function)
     def wrapped(*args, **kwargs):
-
         if LIFEGUARD_CONTEXT.auth_method in AUTHENTICATION_METHODS:
             return AUTHENTICATION_METHODS[LIFEGUARD_CONTEXT.auth_method](
                 args, kwargs, function
@@ -178,8 +177,13 @@ def login_required(function):
 
 def register_custom_controller(path, function, options):
     endpoint = options.pop("endpoint", function.__name__)
+    skip_login = options.pop("skip_login", False)
+
+    if not skip_login:
+        function = login_required(function)
+
     custom_controllers.add_url_rule(
-        path, endpoint, configure_controller(login_required(function)), **options
+        path, endpoint, configure_controller(function), **options
     )
 
 
