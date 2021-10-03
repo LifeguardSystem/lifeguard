@@ -2,17 +2,17 @@ import unittest
 from unittest.mock import ANY, MagicMock, patch
 
 from lifeguard.controllers import (
-    Response,
-    load_custom_controllers,
-    treat_response,
-    configure_controller,
-    build_content_from_template,
     Request,
+    Response,
     Session,
+    build_content_from_template,
+    configure_controller,
+    load_custom_controllers,
     login_required,
+    register_custom_controller,
     render_template,
     send_status,
-    register_custom_controller,
+    treat_response,
 )
 from tests.fixtures.controllers.hello_controller import hello
 
@@ -150,6 +150,7 @@ class TestControllers(unittest.TestCase):
         mock_flask_request.method = "method"
         mock_flask_request.args = "args"
         mock_flask_request.values = "values"
+        mock_flask_request.cookies = "cookies"
 
         self.assertEqual("json", request.json)
         self.assertEqual("data", request.data)
@@ -158,6 +159,7 @@ class TestControllers(unittest.TestCase):
         self.assertEqual("method", request.method)
         self.assertEqual("args", request.args)
         self.assertEqual("values", request.values)
+        self.assertEqual("cookies", request.cookies)
 
     @patch("lifeguard.controllers.flask_session", spec={})
     def test_session_proxy(self, mock_session):
@@ -206,6 +208,7 @@ class TestControllers(unittest.TestCase):
             {
                 "_content": None,
                 "_content_type": "text/html",
+                "_cookies": {},
                 "_data": None,
                 "_headers": None,
                 "_status": 200,
@@ -228,6 +231,7 @@ class TestControllers(unittest.TestCase):
             {
                 "_content": None,
                 "_content_type": "text/html",
+                "_cookies": {},
                 "_data": {"test": "test"},
                 "_headers": {"header1": "test"},
                 "_status": 200,
@@ -245,9 +249,48 @@ class TestControllers(unittest.TestCase):
             {
                 "_content": None,
                 "_content_type": "text/html",
+                "_cookies": {},
                 "_data": {},
                 "_headers": {},
                 "_status": 404,
+                "_template": None,
+                "_template_searchpath": None,
+            },
+        )
+
+    def test_response_set_cookie(self):
+
+        response = send_status(201)
+        response.set_cookie("session", "value")
+
+        self.assertDictEqual(
+            response.__dict__,
+            {
+                "_content": None,
+                "_content_type": "text/html",
+                "_cookies": {"session": {"value": "value"}},
+                "_data": {},
+                "_headers": {},
+                "_status": 201,
+                "_template": None,
+                "_template_searchpath": None,
+            },
+        )
+
+    def test_response_set_cookie_with_options(self):
+
+        response = send_status(201)
+        response.set_cookie("session", "value", {"expires": 5})
+
+        self.assertDictEqual(
+            response.__dict__,
+            {
+                "_content": None,
+                "_content_type": "text/html",
+                "_cookies": {"session": {"expires": 5, "value": "value"}},
+                "_data": {},
+                "_headers": {},
+                "_status": 201,
                 "_template": None,
                 "_template_searchpath": None,
             },

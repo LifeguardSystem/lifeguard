@@ -30,6 +30,7 @@ class TestAssetsControllers(unittest.TestCase):
                 {
                     "_content": "io",
                     "_content_type": "image/jpeg",
+                    "_cookies": {},
                     "_data": {},
                     "_headers": {},
                     "_status": 200,
@@ -64,6 +65,7 @@ class TestAssetsControllers(unittest.TestCase):
             {
                 "_content": None,
                 "_content_type": "text/html",
+                "_cookies": {},
                 "_data": {},
                 "_headers": {},
                 "_status": 404,
@@ -94,6 +96,7 @@ class TestAssetsControllers(unittest.TestCase):
             {
                 "_content": None,
                 "_content_type": "text/html",
+                "_cookies": {},
                 "_data": {},
                 "_headers": {},
                 "_status": 404,
@@ -124,6 +127,7 @@ class TestAssetsControllers(unittest.TestCase):
             {
                 "_content": None,
                 "_content_type": "text/html",
+                "_cookies": {},
                 "_data": {},
                 "_headers": {},
                 "_status": 404,

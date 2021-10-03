@@ -12,6 +12,7 @@ from flask import Blueprint
 from flask import Response as FlaskResponse
 from flask import request as flask_request
 from flask import session as flask_session
+from flask import redirect as flask_redirect
 
 from lifeguard.auth import AUTHENTICATION_METHODS
 from lifeguard.context import LIFEGUARD_CONTEXT
@@ -91,6 +92,10 @@ class Request:
     def values(self):
         return flask_request.values
 
+    @property
+    def cookies(self):
+        return flask_request.cookies
+
 
 class Response:
     def __init__(self):
@@ -101,6 +106,7 @@ class Response:
         self._status = 200
         self._data = {}
         self._headers = {}
+        self._cookies = {}
 
     @property
     def content_type(self):
@@ -158,6 +164,24 @@ class Response:
     def headers(self, value):
         self._headers = value
 
+    @property
+    def cookies(self):
+        return self._cookies
+
+    @cookies.setter
+    def cookies(self, value):
+        self._cookies = value
+
+    def set_cookie(self, key, value, options=None):
+        if not options:
+            options = {}
+        options["value"] = value
+        self._cookies[key] = options
+
+
+def redirect(location, code=302):
+    return flask_redirect(location, code)
+
 
 def login_required(function):
     """
@@ -214,12 +238,18 @@ def treat_response(response):
             response.template, response.template_searchpath, data=response.data
         )
 
-    return FlaskResponse(
+    flask_response = FlaskResponse(
         content,
         content_type=response.content_type,
         status=response.status,
         headers=response.headers,
     )
+
+    for key in response.cookies.keys():
+        value = response.cookies[key].pop("value")
+        flask_response.set_cookie(key, value, **response.cookies[key])
+
+    return flask_response
 
 
 def configure_controller(function):
