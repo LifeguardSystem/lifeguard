@@ -6,8 +6,9 @@ import logging
 import sys
 import time
 from datetime import datetime
+from logging.handlers import RotatingFileHandler
 
-from lifeguard.settings import LOG_LEVEL
+from lifeguard.settings import LOG_LEVEL, LOG_FILE, LOG_BACKUP_COUNT, LOG_MAX_BYTES
 
 
 class CustomFormatter(logging.Formatter):
@@ -54,6 +55,14 @@ logging.setLoggerClass(CustomLogger)
 lifeguard_logger = logging.getLogger("lifeguard")
 lifeguard_logger.propagate = 0
 lifeguard_logger.setLevel(getattr(logging, LOG_LEVEL))
+
+if LOG_FILE:
+    LIFEGUARD_FILE_HANDLER = RotatingFileHandler(
+        LOG_FILE, maxBytes=LOG_MAX_BYTES, backupCount=LOG_BACKUP_COUNT
+    )
+    LIFEGUARD_FILE_HANDLER.setFormatter(CustomFormatter())
+    lifeguard_logger.addHandler(LIFEGUARD_FILE_HANDLER)
+
 
 LIFEGUARD_HANDLER = logging.StreamHandler()
 LIFEGUARD_HANDLER.setFormatter(CustomFormatter())

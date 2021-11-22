@@ -87,6 +87,20 @@ SETTINGS_MANAGER = SettingsManager(
             "default": "INFO",
             "description": "Sets the Lifeguard's core log level",
         },
+        "LIFEGUARD_LOG_FILE": {
+            "default": "",
+            "description": "Sets lifeguard logs file",
+        },
+        "LIFEGUARD_LOG_MAX_BYTES": {
+            "default": "10000000",
+            "type": "int",
+            "description": "Rotating log file max bytes",
+        },
+        "LIFEGUARD_LOG_BACKUP_COUNT": {
+            "default": "2",
+            "type": "int",
+            "description": "Rotating log file backup count",
+        },
         "LIFEGUARD_HTTP_PROXY": {
             "default": None,
             "description": "Proxy used to http calls",
@@ -152,6 +166,9 @@ LIFEGUARD_CONTROLLERS_ASSETS_ENABLED = SETTINGS_MANAGER.read_value(
 LIFEGUARD_SECRET_KEY = SETTINGS_MANAGER.read_value("LIFEGUARD_SECRET_KEY")
 
 LOG_LEVEL = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_LEVEL")
+LOG_FILE = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_FILE")
+LOG_BACKUP_COUNT = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_BACKUP_COUNT")
+LOG_MAX_BYTES = SETTINGS_MANAGER.read_value("LIFEGUARD_LOG_MAX_BYTES")
 HTTP_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTP_PROXY")
 HTTPS_PROXY = SETTINGS_MANAGER.read_value("LIFEGUARD_HTTPS_PROXY")
 
