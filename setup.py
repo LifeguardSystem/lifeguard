@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="lifeguard",
-    version="0.0.37",
+    version="0.0.38",
     url="https://github.com/LifeguardSystem/lifeguard",
     author="Diego Rubin",
     author_email="contact@diegorubin.dev",

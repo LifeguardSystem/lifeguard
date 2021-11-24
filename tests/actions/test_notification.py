@@ -67,6 +67,57 @@ class TestActionNotification(unittest.TestCase):
         )
 
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
+    @patch("lifeguard.actions.notifications.logger", mock_logger)
+    def test_should_send_notify_in_single_message_with_template(self):
+        self.mock_validation_response.settings = {
+            "notification": {
+                "notify": True,
+                "data": {"user": "a user", "body": "message body"},
+            }
+        }
+        self.mock_validation_response.details = {"status": "PROBLEM"}
+
+        self.mock_settings["notification"] = {
+            "template": """Hello {{user}},
+{{body}}
+"""
+        }
+
+        notify_in_single_message(self.mock_validation_response, self.mock_settings)
+
+        mock_implementation.send_single_message.assert_called_with(
+            "Hello a user,\nmessage body",
+            {"notification": {"template": "Hello {{user}},\n{{body}}\n"}},
+        )
+
+    @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
+    @patch("lifeguard.actions.notifications.logger", mock_logger)
+    def test_should_send_multiple_notify_in_single_message_with_template(self):
+        self.mock_validation_response.settings = {
+            "notification": {
+                "notify": True,
+                "data": [
+                    {"user": "first user", "body": "message body"},
+                    {"user": "second user", "body": "message body"},
+                ],
+            }
+        }
+        self.mock_validation_response.details = {"status": "PROBLEM"}
+
+        self.mock_settings["notification"] = {
+            "template": """Hello {{user}},
+{{body}}
+"""
+        }
+
+        notify_in_single_message(self.mock_validation_response, self.mock_settings)
+
+        mock_implementation.send_single_message.assert_called_with(
+            ["Hello first user,\nmessage body", "Hello second user,\nmessage body"],
+            {"notification": {"template": "Hello {{user}},\n{{body}}\n"}},
+        )
+
+    @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")
     @patch("lifeguard.actions.notifications.NotificationRepository")
     @patch("lifeguard.actions.notifications.logger", mock_logger)

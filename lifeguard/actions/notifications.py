@@ -2,12 +2,25 @@
 Base of action used to notification
 """
 from datetime import datetime
+import jinja2
 import json
 
 from lifeguard import NORMAL, PROBLEM
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.notifications import NOTIFICATION_METHODS, NotificationStatus
 from lifeguard.repositories import NotificationRepository
+
+
+def __get_content(validation_response, settings):
+    if "template" in settings.get("notification", {}):
+        template = jinja2.Template(settings["notification"]["template"])
+        if isinstance(validation_response.settings["notification"]["data"], list):
+            return [
+                template.render(**data)
+                for data in validation_response.settings["notification"]["data"]
+            ]
+        return template.render(**validation_response.settings["notification"]["data"])
+    return json.dumps(validation_response.details)
 
 
 def notify_in_thread(validation_response, settings):
@@ -26,7 +39,7 @@ def notify_in_thread(validation_response, settings):
     if not last_notification_status and validation_response.status != PROBLEM:
         return
 
-    content = json.dumps(validation_response.details)
+    content = __get_content(validation_response, settings)
 
     if not last_notification_status:
         thread_ids = {}
@@ -91,6 +104,6 @@ def notify_in_single_message(validation_response, settings):
     should_notify = notification_settings.get("notify", False)
 
     if should_notify:
-        content = json.dumps(validation_response.details)
+        content = __get_content(validation_response, settings)
         for notification_method in NOTIFICATION_METHODS:
             notification_method.send_single_message(content, settings)
