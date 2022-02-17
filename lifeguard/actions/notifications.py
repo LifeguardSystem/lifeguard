@@ -7,8 +7,16 @@ import json
 
 from lifeguard import NORMAL, PROBLEM
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.notifications import NOTIFICATION_METHODS, NotificationStatus
-from lifeguard.repositories import NotificationRepository
+from lifeguard.notifications import (
+    NOTIFICATION_METHODS,
+    INIT_THREAD_MESSAGE_NOTIFICATION,
+    CLOSE_THREAD_MESSAGE_NOTIFICATION,
+    SINGLE_MESSAGE_NOTIFICATION,
+    UPDATE_THREAD_MESSAGE_NOTIFICATION,
+    NotificationOccurrence,
+    NotificationStatus,
+)
+from lifeguard.repositories import HistoryRepository, NotificationRepository
 
 
 def __get_content(validation_response, settings):
@@ -51,6 +59,11 @@ def notify_in_thread(validation_response, settings):
         last_notification_status = NotificationStatus(
             validation_response.validation_name, thread_ids
         )
+        __append_notification(
+            validation_response,
+            settings,
+            INIT_THREAD_MESSAGE_NOTIFICATION,
+        )
     else:
         for notification_method in NOTIFICATION_METHODS:
             if notification_method.name in last_notification_status.thread_ids:
@@ -75,15 +88,40 @@ def __send_notification_in_thread(
     if validation_response.status == NORMAL:
         notification_method.close_thread(thread_id, content, settings)
         last_notification_status.close()
+        __append_notification(
+            validation_response,
+            settings,
+            CLOSE_THREAD_MESSAGE_NOTIFICATION,
+        )
     else:
         last_notification_was_in_seconds = (
             datetime.now() - last_notification_status.last_notification
         ).seconds
         interval = settings.get("notification", {}).get("update_thread_interval", 0)
+
         if last_notification_was_in_seconds >= interval:
             logger.debug("updating notification")
             notification_method.update_thread(thread_id, content, settings)
             last_notification_status.update()
+            __append_notification(
+                validation_response,
+                settings,
+                UPDATE_THREAD_MESSAGE_NOTIFICATION,
+            )
+
+
+def __append_notification(validation_response, settings, notification_type):
+    notification_settings = settings.get("notification", {})
+    add_to_history = notification_settings.get("add_to_history", False)
+    if add_to_history:
+        HistoryRepository().append_notification(
+            NotificationOccurrence(
+                validation_name=validation_response.validation_name,
+                details=validation_response.details,
+                status=validation_response.status,
+                notification_type=notification_type,
+            )
+        )
 
 
 def notify_in_single_message(validation_response, settings):
@@ -107,3 +145,7 @@ def notify_in_single_message(validation_response, settings):
         content = __get_content(validation_response, settings)
         for notification_method in NOTIFICATION_METHODS:
             notification_method.send_single_message(content, settings)
+
+        __append_notification(
+            validation_response, settings, SINGLE_MESSAGE_NOTIFICATION
+        )

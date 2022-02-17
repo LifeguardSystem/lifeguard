@@ -3,11 +3,64 @@ Base of notification system
 """
 
 from datetime import datetime
-from json import JSONEncoder
 
 from lifeguard.logger import lifeguard_logger as logger
 
 NOTIFICATION_METHODS = []
+
+SINGLE_MESSAGE_NOTIFICATION = "single"
+INIT_THREAD_MESSAGE_NOTIFICATION = "init_thread"
+UPDATE_THREAD_MESSAGE_NOTIFICATION = "update_thread"
+CLOSE_THREAD_MESSAGE_NOTIFICATION = "close_thread"
+NOTIFICATION_TYPE = []
+
+
+class NotificationOccurrence:
+    """
+    Notification history entry
+    """
+
+    def __init__(self, validation_name, details, status, notification_type):
+        self._validation_name = validation_name
+        self._details = details
+        self._status = status
+        self._notification_type = notification_type
+        self._created_at = datetime.now()
+
+    @property
+    def validation_name(self):
+        """
+        Return validation name
+        """
+        return self._validation_name
+
+    @property
+    def details(self):
+        """
+        Return details
+        """
+        return self._details
+
+    @property
+    def status(self):
+        """
+        Return status
+        """
+        return self._status
+
+    @property
+    def notification_type(self):
+        """
+        Return notification type
+        """
+        return self._notification_type
+
+    @property
+    def created_at(self):
+        """
+        Return created_at
+        """
+        return self._created_at
 
 
 class NotificationStatus:
@@ -15,7 +68,7 @@ class NotificationStatus:
     Notification status class
     """
 
-    def __init__(self, validation_name, thread_ids, options=None):
+    def __init__(self, validation_name, thread_ids, options=None, content=None):
         self._validation_name = validation_name
         self._thread_ids = thread_ids
         self._options = options
@@ -100,19 +153,6 @@ class NotificationStatus:
 
     def __str__(self):
         return str(self.get_attributes())
-
-
-class ValidationResponseEncoder(JSONEncoder):
-    """
-    Enconder for Validation Response
-    """
-
-    def default(self, validation_response):
-        """
-        Default implementation for validation response encoder
-        """
-
-        return validation_response.get_attributes()
 
 
 class NotificationBase:

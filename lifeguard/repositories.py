@@ -41,6 +41,14 @@ class NotificationRepository(BaseRepository):
         )
 
 
+class HistoryRepository(BaseRepository):
+    def __init__(self):
+        BaseRepository.__init_repository__(self, "history")
+
+    def append_notification(self, notification_occurrence):
+        self.__implementation__.append_notification(notification_occurrence)
+
+
 def declare_implementation(repository, implementation):
 
     if repository in IMPLEMENTATIONS:
