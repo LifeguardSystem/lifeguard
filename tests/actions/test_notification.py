@@ -77,7 +77,7 @@ class TestActionNotification(unittest.TestCase):
             '{"status": "PROBLEM"}', {"notification": {"add_to_history": True}}
         )
         notification_occurrence = (
-            history_repository_instance.append_notification.call_args.args[0]
+            history_repository_instance.append_notification.call_args[0][0]
         )
 
         self.assertEqual(notification_occurrence.notification_type, "single")
@@ -187,7 +187,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         notification_occurrence = (
-            history_repository_instance.append_notification.call_args.args[0]
+            history_repository_instance.append_notification.call_args[0][0]
         )
 
         self.assertEqual(notification_occurrence.notification_type, "init_thread")
@@ -227,7 +227,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         notification_occurrence = (
-            history_repository_instance.append_notification.call_args.args[0]
+            history_repository_instance.append_notification.call_args[0][0]
         )
 
         self.assertEqual(notification_occurrence.notification_type, "close_thread")
@@ -263,7 +263,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         notification_occurrence = (
-            history_repository_instance.append_notification.call_args.args[0]
+            history_repository_instance.append_notification.call_args[0][0]
         )
 
         self.assertEqual(notification_occurrence.notification_type, "update_thread")
