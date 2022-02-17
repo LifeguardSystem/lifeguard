@@ -4,6 +4,7 @@ import sys
 
 from lifeguard.repositories import (
     IMPLEMENTATIONS,
+    HistoryRepository,
     NotificationRepository,
     ValidationRepository,
     declare_implementation,
@@ -11,7 +12,7 @@ from lifeguard.repositories import (
 
 sys.path.append("tests/fixtures")
 
-NAMES = ["notification", "validation"]
+NAMES = ["history", "notification", "validation"]
 
 
 class TestNotificationRepository(unittest.TestCase):
@@ -45,6 +46,42 @@ class TestNotificationRepository(unittest.TestCase):
         )
         self.implementation.fetch_last_notification_for_a_validation.assert_called_with(
             validation_name
+        )
+
+
+class TestHistoryRepository(unittest.TestCase):
+    def setUp(self):
+        for name in NAMES:
+            if name in IMPLEMENTATIONS:
+                IMPLEMENTATIONS.pop(name)
+
+        self.implementation = MagicMock(name="implementation")
+
+        with patch("lifeguard.repositories.logger"):
+            implementation_class = MagicMock(name="implementation_class")
+            implementation_class.__name__ = "mocked_implementation"
+            implementation_class.return_value = self.implementation
+
+            declare_implementation("history", implementation_class)
+
+        self.history_repository = HistoryRepository()
+
+    def test_append_notification(self):
+        notification_occurrence = MagicMock(name="notification_occurrence")
+        self.history_repository.append_notification(notification_occurrence)
+        self.implementation.append_notification.assert_called_with(
+            notification_occurrence
+        )
+
+    def test_fetch_notifications(self):
+        start_interval = MagicMock(name="start_interval")
+        end_interval = MagicMock(name="end_interval")
+        filters = MagicMock(name="filters")
+        self.history_repository.fetch_notifications(
+            start_interval, end_interval, filters
+        )
+        self.implementation.fetch_notifications.assert_called_with(
+            start_interval, end_interval, filters
         )
 
 
