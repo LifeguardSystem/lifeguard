@@ -20,12 +20,14 @@ class NotificationOccurrence:
     Notification history entry
     """
 
-    def __init__(self, validation_name, details, status, notification_type):
+    def __init__(
+        self, validation_name, details, status, notification_type, created_at=None
+    ):
         self._validation_name = validation_name
         self._details = details
         self._status = status
         self._notification_type = notification_type
-        self._created_at = datetime.now()
+        self._created_at = created_at if created_at else datetime.now()
 
     @property
     def validation_name(self):
