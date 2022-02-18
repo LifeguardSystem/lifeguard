@@ -17,6 +17,7 @@ from lifeguard.notifications import (
     NotificationStatus,
 )
 from lifeguard.repositories import HistoryRepository, NotificationRepository
+from lifeguard.settings import LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY
 
 
 def __get_content(validation_response, settings):
@@ -112,7 +113,9 @@ def __send_notification_in_thread(
 
 def __append_notification(validation_response, settings, notification_type):
     notification_settings = settings.get("notification", {})
-    add_to_history = notification_settings.get("add_to_history", False)
+    add_to_history = notification_settings.get(
+        "add_to_history", LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY
+    )
     if add_to_history:
         HistoryRepository().append_notification(
             NotificationOccurrence(

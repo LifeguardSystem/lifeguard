@@ -148,6 +148,11 @@ SETTINGS_MANAGER = SettingsManager(
             "default": "lifeguard_key",
             "description": "Secret key used in session",
         },
+        "LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY": {
+            "default": "false",
+            "type": "bool",
+            "description": "Append all notifications to history",
+        },
     }
 )
 
@@ -176,3 +181,6 @@ LIFEGUARD_RUN_ONLY_VALIDATIONS = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_RUN_ONLY_VALIDATIONS"
 )
 LIFEGUARD_SKIP_VALIDATIONS = SETTINGS_MANAGER.read_value("LIFEGUARD_SKIP_VALIDATIONS")
+LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY = SETTINGS_MANAGER.read_value(
+    "LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY"
+)
