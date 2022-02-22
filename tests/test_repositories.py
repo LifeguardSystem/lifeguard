@@ -73,16 +73,25 @@ class TestHistoryRepository(unittest.TestCase):
             notification_occurrence
         )
 
+    def test_count_notifications(self):
+        result = self.history_repository.count_notifications()
+
+        self.implementation.count_notifications.assert_called_with(None, None, {})
+        self.assertIsNotNone(result)
+
     def test_fetch_notifications(self):
         start_interval = MagicMock(name="start_interval")
         end_interval = MagicMock(name="end_interval")
         filters = MagicMock(name="filters")
-        self.history_repository.fetch_notifications(
+
+        result = self.history_repository.fetch_notifications(
             start_interval, end_interval, filters
         )
+
         self.implementation.fetch_notifications.assert_called_with(
-            start_interval, end_interval, filters
+            start_interval, end_interval, filters, None, None
         )
+        self.assertIsNotNone(result)
 
 
 class TestValidationRepositories(unittest.TestCase):

@@ -48,8 +48,15 @@ class HistoryRepository(BaseRepository):
     def append_notification(self, notification_occurrence):
         self.__implementation__.append_notification(notification_occurrence)
 
-    def fetch_notifications(self, start_interval, end_interval, filters={}):
+    def fetch_notifications(
+        self, start_interval, end_interval, filters={}, page=None, limit=None
+    ):
         return self.__implementation__.fetch_notifications(
+            start_interval, end_interval, filters, page, limit
+        )
+
+    def count_notifications(self, start_interval=None, end_interval=None, filters={}):
+        return self.__implementation__.count_notifications(
             start_interval, end_interval, filters
         )
 
