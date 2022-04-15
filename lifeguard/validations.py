@@ -108,20 +108,6 @@ class ValidationResponseEncoder(JSONEncoder):
     Load validations from application path
     """
 
-
-#
-# sys.path.append(LIFEGUARD_DIRECTORY)
-# for validation_file in os.listdir(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
-#    if validation_file.endswith("_validation.py"):
-#        validation_module_name = validation_file.replace(".py", "")
-#        logger.info("loading validation %s", validation_module_name)
-#
-#        module = "validations.%s" % (validation_module_name)
-#        print(module)
-#        if module not in sys.modules:
-#            __import__(module)
-
-
 def load_validations():
     """
     Load validations from application path
