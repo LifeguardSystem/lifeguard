@@ -3,7 +3,11 @@ import unittest
 from unittest.mock import patch
 
 from lifeguard import NORMAL
-from lifeguard.validations import ValidationResponse, load_validations, VALIDATIONS
+from lifeguard.validations import (
+    ValidationResponse,
+    load_validations,
+    VALIDATIONS,
+)
 
 
 class TestValidationResponse(unittest.TestCase):
@@ -33,6 +37,15 @@ class TestValidations(unittest.TestCase):
         load_validations()
         mock_logger.info.assert_any_call("loading validation %s", "simple_validation")
         self.assertTrue("simple_validation" in VALIDATIONS)
+
+    @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch("lifeguard.validations.logger")
+    def test_load_validations_subdir(self, mock_logger):
+        load_validations()
+        mock_logger.info.assert_any_call(
+            "loading validation %s", "simple_subdir_validation"
+        )
+        self.assertTrue("simple_subdir_validation" in VALIDATIONS)
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")

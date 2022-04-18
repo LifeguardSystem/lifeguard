@@ -109,15 +109,31 @@ def load_validations():
     Load validations from application path
     """
 
-    sys.path.append(LIFEGUARD_DIRECTORY)
-    for validation_file in os.listdir(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
-        if validation_file.endswith("_validation.py"):
-            validation_module_name = validation_file.replace(".py", "")
-            logger.info("loading validation %s", validation_module_name)
+    def build_import(path, cur_name):
+        """Returns python like import name"""
+        head, tail = os.path.split(path)
+        if tail:
+            cur_name = f"{tail}.{cur_name}"
+        final_name = cur_name
+        if head:
+            final_name = build_import(head, cur_name)
+        return final_name
 
-            module = "validations.%s" % (validation_module_name)
-            if module not in sys.modules:
-                __import__(module)
+    sys.path.append(LIFEGUARD_DIRECTORY)
+    for (root, dirs, files) in os.walk(
+        os.path.join(LIFEGUARD_DIRECTORY, "validations")
+    ):
+        root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
+        for validation_file in files:
+            if validation_file.endswith("_validation.py"):
+                validation_module_name = (
+                    f'{build_import(root, validation_file.replace(".py", ""))}'
+                )
+                logger.info("loading validation %s", validation_file.replace(".py", ""))
+
+                module = "%s" % (validation_module_name)
+                if module not in sys.modules:
+                    __import__(module)
 
 
 def validation(description=None, actions=None, schedule=None, settings=None):
