@@ -103,10 +103,6 @@ class ValidationResponseEncoder(JSONEncoder):
 
         return validation_response.get_attributes()
 
-    # def load_validations():
-    """
-    Load validations from application path
-    """
 
 def load_validations():
     """
@@ -143,7 +139,7 @@ def load_validations():
 def validation(description=None, actions=None, schedule=None, settings=None):
     """
     Decorator to configure a validation
-    #"""
+    """
 
     def function_reference(decorated):
         @wraps(decorated)
