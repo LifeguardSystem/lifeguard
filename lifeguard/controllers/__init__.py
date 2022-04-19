@@ -233,8 +233,7 @@ def load_custom_controllers():
 
     if not os.path.exists(os.path.join(LIFEGUARD_DIRECTORY, "controllers")):
         return
-
-    for (root, dirs, files) in os.walk(
+    for (root, _dirs, files) in os.walk(
         os.path.join(LIFEGUARD_DIRECTORY, "controllers")
     ):
         root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
