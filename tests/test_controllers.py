@@ -32,10 +32,12 @@ class TestControllers(unittest.TestCase):
             "loading custom controller %s", "hello_controller"
         )
         mock_logger.info.assert_any_call(
-                "loading custom controller %s", "subdir_controller"
+            "loading custom controller %s", "subdir_controller"
         )
         mock_custom_controllers.add_url_rule.assert_any_call("/hello", "hello", ANY)
-        mock_custom_controllers.add_url_rule.assert_called_with("/subdir", "subdir", ANY)
+        mock_custom_controllers.add_url_rule.assert_called_with(
+            "/subdir", "subdir", ANY
+        )
 
     @patch("lifeguard.controllers.FlaskResponse")
     @patch("lifeguard.controllers.build_content_from_template")
