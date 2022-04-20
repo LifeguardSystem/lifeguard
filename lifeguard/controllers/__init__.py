@@ -18,6 +18,7 @@ from lifeguard.auth import AUTHENTICATION_METHODS
 from lifeguard.context import LIFEGUARD_CONTEXT
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import LIFEGUARD_DIRECTORY
+from lifeguard.utils import build_import
 
 custom_controllers = Blueprint("custom", __name__)
 
@@ -218,20 +219,26 @@ def load_custom_controllers():
     """
     Load custom controllers from application path
     """
-
     sys.path.append(LIFEGUARD_DIRECTORY)
 
     if not os.path.exists(os.path.join(LIFEGUARD_DIRECTORY, "controllers")):
         return
+    for (root, _dirs, files) in os.walk(
+        os.path.join(LIFEGUARD_DIRECTORY, "controllers")
+    ):
+        root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
+        for controller_file in files:
+            if controller_file.endswith("_controller.py"):
+                controller_module_name = (
+                    f'{build_import(root, controller_file.replace(".py", ""))}'
+                )
+                logger.info(
+                    "loading custom controller %s", controller_file.replace(".py", "")
+                )
 
-    for controller_file in os.listdir(os.path.join(LIFEGUARD_DIRECTORY, "controllers")):
-        if controller_file.endswith("_controller.py"):
-            controller_module_name = controller_file.replace(".py", "")
-            logger.info("loading custom controller %s", controller_module_name)
-
-            module = "controllers.%s" % (controller_module_name)
-            if module not in sys.modules:
-                __import__(module)
+                module = "%s" % (controller_module_name)
+                if module not in sys.modules:
+                    __import__(module)
 
 
 def treat_response(response):
