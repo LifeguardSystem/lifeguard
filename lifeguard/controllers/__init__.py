@@ -18,6 +18,7 @@ from lifeguard.auth import AUTHENTICATION_METHODS
 from lifeguard.context import LIFEGUARD_CONTEXT
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.settings import LIFEGUARD_DIRECTORY
+from lifeguard.utils import build_import
 
 custom_controllers = Blueprint("custom", __name__)
 

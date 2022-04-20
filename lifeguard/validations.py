@@ -10,6 +10,7 @@ from lifeguard.settings import (
     LIFEGUARD_RUN_ONLY_VALIDATIONS,
     LIFEGUARD_SKIP_VALIDATIONS,
 )
+from lifeguard.utils import build_import
 
 VALIDATIONS = {}
 
@@ -108,18 +109,6 @@ def load_validations():
     """
     Load validations from application path
     """
-
-    def build_import(path, cur_name):
-        """Returns python like import name"""
-        head, tail = os.path.split(path)
-        if tail:
-            cur_name = f"{tail}.{cur_name}"
-        final_name = cur_name
-        if head:
-            final_name = build_import(head, cur_name)
-        return final_name
-
-    sys.path.append(LIFEGUARD_DIRECTORY)
     for (root, dirs, files) in os.walk(
         os.path.join(LIFEGUARD_DIRECTORY, "validations")
     ):
