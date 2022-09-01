@@ -53,6 +53,7 @@ class SettingsManager:
             "validation_list": lambda x: [
                 validation for validation in x.split(",") if validation
             ],
+            "list": lambda line: [entry for entry in line.split(",") if entry],
             "int": int,
             "float": float,
             "str": str,
