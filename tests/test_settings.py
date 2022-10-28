@@ -36,6 +36,18 @@ class SettingsTest(unittest.TestCase):
             "Location of validations and others resources",
         )
 
+    def test_get_a_string_list(self):
+        settings = SettingsManager(
+            {
+                "LIST": {
+                    "default": "item1,item2,",
+                    "type": "list",
+                    "description": "a str list",
+                }
+            }
+        )
+        self.assertEqual(["item1", "item2"], settings.read_value("LIST"))
+
     def test_lifeguard_run_only_validations_default(self):
         self.assertEqual(LIFEGUARD_RUN_ONLY_VALIDATIONS, [])
         self.assertEqual(
