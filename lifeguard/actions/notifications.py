@@ -1,6 +1,7 @@
 """
 Base of action used to notification
 """
+from copy import deepcopy
 from datetime import datetime
 import jinja2
 import json
@@ -54,7 +55,7 @@ def notify_in_thread(validation_response, settings):
         thread_ids = {}
         for notification_method in NOTIFICATION_METHODS:
             thread_ids[notification_method.name] = notification_method.init_thread(
-                content, settings
+                deepcopy(content), settings
             )
 
         last_notification_status = NotificationStatus(
@@ -71,7 +72,7 @@ def notify_in_thread(validation_response, settings):
                 __send_notification_in_thread(
                     last_notification_status,
                     notification_method,
-                    content,
+                    deepcopy(content),
                     settings,
                     validation_response,
                 )
@@ -147,7 +148,7 @@ def notify_in_single_message(validation_response, settings):
     if should_notify:
         content = __get_content(validation_response, settings)
         for notification_method in NOTIFICATION_METHODS:
-            notification_method.send_single_message(content, settings)
+            notification_method.send_single_message(deepcopy(content), settings)
 
         __append_notification(
             validation_response, settings, SINGLE_MESSAGE_NOTIFICATION

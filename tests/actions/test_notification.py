@@ -155,13 +155,18 @@ class TestActionNotification(unittest.TestCase):
 
         mock_json.dumps.assert_not_called()
 
+    @patch("lifeguard.actions.notifications.deepcopy")
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")
     @patch("lifeguard.actions.notifications.HistoryRepository")
     @patch("lifeguard.actions.notifications.NotificationRepository")
     @patch("lifeguard.actions.notifications.logger", mock_logger)
     def test_should_send_notify_open_thread(
-        self, mock_notification_repository, mock_history_repository, mock_json
+        self,
+        mock_notification_repository,
+        mock_history_repository,
+        mock_json,
+        mock_deepcopy,
     ):
         history_repository_instance = MagicMock(name="history_repository")
         mock_history_repository.return_value = history_repository_instance
@@ -173,6 +178,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         mock_json.dumps.return_value = "{}"
+        mock_deepcopy.return_value = "{}"
 
         self.mock_validation_response.validation_name = "validation_name"
         self.mock_validation_response.status = PROBLEM
@@ -181,6 +187,8 @@ class TestActionNotification(unittest.TestCase):
         notify_in_thread(
             self.mock_validation_response, {"notification": {"add_to_history": True}}
         )
+
+        mock_deepcopy.assert_called_with("{}")
 
         mock_implementation.init_thread.assert_called_with(
             "{}", {"notification": {"add_to_history": True}}
@@ -195,13 +203,18 @@ class TestActionNotification(unittest.TestCase):
         self.assertEqual(notification_occurrence.details, {})
         self.assertEqual(notification_occurrence.status, "PROBLEM")
 
+    @patch("lifeguard.actions.notifications.deepcopy")
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")
     @patch("lifeguard.actions.notifications.HistoryRepository")
     @patch("lifeguard.actions.notifications.NotificationRepository")
     @patch("lifeguard.actions.notifications.logger", mock_logger)
     def test_should_send_notify_close_thread(
-        self, mock_notification_repository, mock_history_repository, mock_json
+        self,
+        mock_notification_repository,
+        mock_history_repository,
+        mock_json,
+        mock_deepcopy,
     ):
 
         history_repository_instance = MagicMock(name="history_repository")
@@ -214,6 +227,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         mock_json.dumps.return_value = "{}"
+        mock_deepcopy.return_value = "{}"
 
         self.mock_validation_response.status = NORMAL
         self.mock_validation_response.details = {}
@@ -221,6 +235,8 @@ class TestActionNotification(unittest.TestCase):
         notify_in_thread(
             self.mock_validation_response, {"notification": {"add_to_history": True}}
         )
+
+        mock_deepcopy.assert_called_with("{}")
 
         mock_implementation.close_thread.assert_called_with(
             "thread", "{}", {"notification": {"add_to_history": True}}
@@ -232,13 +248,18 @@ class TestActionNotification(unittest.TestCase):
 
         self.assertEqual(notification_occurrence.notification_type, "close_thread")
 
+    @patch("lifeguard.actions.notifications.deepcopy")
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")
     @patch("lifeguard.actions.notifications.HistoryRepository")
     @patch("lifeguard.actions.notifications.NotificationRepository")
     @patch("lifeguard.actions.notifications.logger", mock_logger)
     def test_should_send_notify_update_thread(
-        self, mock_notification_repository, mock_history_repository, mock_json
+        self,
+        mock_notification_repository,
+        mock_history_repository,
+        mock_json,
+        mock_deepcopy,
     ):
         history_repository_instance = MagicMock(name="history_repository")
         mock_history_repository.return_value = history_repository_instance
@@ -250,6 +271,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         mock_json.dumps.return_value = "{}"
+        mock_deepcopy.return_value = "{}"
 
         self.mock_validation_response.status = PROBLEM
         self.mock_validation_response.details = {}
@@ -257,6 +279,8 @@ class TestActionNotification(unittest.TestCase):
         notify_in_thread(
             self.mock_validation_response, {"notification": {"add_to_history": True}}
         )
+
+        mock_deepcopy.assert_called_with("{}")
 
         mock_implementation.update_thread.assert_called_with(
             "thread", "{}", {"notification": {"add_to_history": True}}
@@ -268,12 +292,13 @@ class TestActionNotification(unittest.TestCase):
 
         self.assertEqual(notification_occurrence.notification_type, "update_thread")
 
+    @patch("lifeguard.actions.notifications.deepcopy")
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")
     @patch("lifeguard.actions.notifications.NotificationRepository")
     @patch("lifeguard.actions.notifications.logger", mock_logger)
     def test_should_not_update_thread_if_into_interval(
-        self, mock_notification_repository, mock_json
+        self, mock_notification_repository, mock_json, mock_deepcopy
     ):
         notification_repository_instance = MagicMock(name="repository")
         mock_notification_repository.return_value = notification_repository_instance
@@ -282,6 +307,7 @@ class TestActionNotification(unittest.TestCase):
         )
 
         mock_json.dumps.return_value = "{}"
+        mock_deepcopy.return_value = "{}"
 
         self.mock_validation_response.status = PROBLEM
         self.mock_validation_response.details = {}
