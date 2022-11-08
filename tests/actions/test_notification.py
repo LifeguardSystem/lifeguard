@@ -46,6 +46,7 @@ NOTIFICATION_METHODS = [mock_notification_instance]
 class TestActionNotification(unittest.TestCase):
     def setUp(self):
 
+        NOTIFICATION_METHODS[0].mock_implementation.reset_mock()
         self.mock_validation_response = MagicMock(name="mock_validation_response")
         self.mock_validation_response.settings = None
         self.mock_settings = {}
@@ -135,6 +136,28 @@ class TestActionNotification(unittest.TestCase):
             ["Hello first user,\nmessage body", "Hello second user,\nmessage body"],
             {"notification": {"template": "Hello {{user}},\n{{body}}\n"}},
         )
+
+    @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
+    @patch("lifeguard.actions.notifications.logger", mock_logger)
+    def test_should_not_send_notify_in_single_if_is_disabled(self):
+        self.mock_validation_response.settings = {
+            "notification": {
+                "notify": True,
+                "data": {"user": "a user", "body": "message body"},
+            }
+        }
+        self.mock_validation_response.details = {"status": "PROBLEM"}
+
+        self.mock_settings["notification"] = {
+            "disabled": ["not implemented"],
+            "template": """Hello {{user}},
+{{body}}
+""",
+        }
+
+        notify_in_single_message(self.mock_validation_response, self.mock_settings)
+
+        mock_implementation.send_single_message.assert_not_called()
 
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")

@@ -33,6 +33,11 @@ def __get_content(validation_response, settings):
     return json.dumps(validation_response.details)
 
 
+def __get_notification_methods(settings):
+    disabled = settings.get("notification", {}).get("disabled", [])
+    return [method for method in NOTIFICATION_METHODS if method.name not in disabled]
+
+
 def notify_in_thread(validation_response, settings):
     """
     Create a new thread to notify problem status.
@@ -53,7 +58,7 @@ def notify_in_thread(validation_response, settings):
 
     if not last_notification_status:
         thread_ids = {}
-        for notification_method in NOTIFICATION_METHODS:
+        for notification_method in __get_notification_methods(settings):
             thread_ids[notification_method.name] = notification_method.init_thread(
                 deepcopy(content), settings
             )
@@ -67,7 +72,7 @@ def notify_in_thread(validation_response, settings):
             INIT_THREAD_MESSAGE_NOTIFICATION,
         )
     else:
-        for notification_method in NOTIFICATION_METHODS:
+        for notification_method in __get_notification_methods(settings):
             if notification_method.name in last_notification_status.thread_ids:
                 __send_notification_in_thread(
                     last_notification_status,
@@ -147,7 +152,7 @@ def notify_in_single_message(validation_response, settings):
 
     if should_notify:
         content = __get_content(validation_response, settings)
-        for notification_method in NOTIFICATION_METHODS:
+        for notification_method in __get_notification_methods(settings):
             notification_method.send_single_message(deepcopy(content), settings)
 
         __append_notification(
