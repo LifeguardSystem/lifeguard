@@ -10,9 +10,20 @@ from lifeguard.settings import (
     LIFEGUARD_RUN_ONLY_VALIDATIONS,
     LIFEGUARD_SKIP_VALIDATIONS,
 )
+from lifeguard.statuses import PROBLEM
 from lifeguard.utils import build_import
 
 VALIDATIONS = {}
+
+
+def __execute_actions(actions, result, settings):
+    for action in actions or []:
+        logger.info(
+            "executing action %s with result %s...",
+            str(action.__name__),
+            str(result),
+        )
+        action(result, settings)
 
 
 class ValidationResponse:
@@ -109,7 +120,7 @@ def load_validations():
     """
     Load validations from application path
     """
-    for (root, dirs, files) in os.walk(
+    for (root, _dirs, files) in os.walk(
         os.path.join(LIFEGUARD_DIRECTORY, "validations")
     ):
         root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
@@ -156,13 +167,7 @@ def validation(
                     return None
 
                 result = decorated(*args, **kwargs)
-                for action in actions or []:
-                    logger.info(
-                        "executing action %s with result %s...",
-                        str(action.__name__),
-                        str(result),
-                    )
-                    action(result, settings)
+                __execute_actions(actions, result, settings)
 
                 return result
             except Exception as exception:
@@ -171,6 +176,19 @@ def validation(
                     str(decorated.__name__),
                     str(exception),
                     extra={"traceback": traceback.format_exc()},
+                )
+                __execute_actions(
+                    actions_on_error,
+                    ValidationResponse(
+                        decorated.__name__,
+                        PROBLEM,
+                        {
+                            "exception": str(exception),
+                            "traceback": traceback.format_exc(),
+                            "use_error_template": True,
+                        },
+                    ),
+                    settings,
                 )
 
         VALIDATIONS[decorated.__name__] = {

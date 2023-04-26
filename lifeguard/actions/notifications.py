@@ -6,7 +6,7 @@ from datetime import datetime
 import jinja2
 import json
 
-from lifeguard import NORMAL, PROBLEM
+from lifeguard.statuses import NORMAL, PROBLEM
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.notifications import (
     NOTIFICATION_METHODS,
@@ -21,15 +21,35 @@ from lifeguard.repositories import HistoryRepository, NotificationRepository
 from lifeguard.settings import LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY
 
 
+def __merge_details_and_data(validation_response, notification_data):
+    data = deepcopy(validation_response.details)
+    data.update(notification_data)
+    return data
+
+
 def __get_content(validation_response, settings):
-    if "template" in settings.get("notification", {}):
-        template = jinja2.Template(settings["notification"]["template"])
-        if isinstance(validation_response.settings["notification"]["data"], list):
+    template_origin = (
+        "template"
+        if not (validation_response.details or {}).get("use_error_template", False)
+        else "template_error"
+    )
+
+    if template_origin in settings.get("notification", {}):
+        template = jinja2.Template(settings["notification"][template_origin])
+        notification_data = (
+            (validation_response.settings or {}).get("notification", {}).get("data", {})
+        )
+        if isinstance(notification_data, list):
             return [
-                template.render(**data)
-                for data in validation_response.settings["notification"]["data"]
+                template.render(**__merge_details_and_data(validation_response, data))
+                for data in notification_data
             ]
-        return template.render(**validation_response.settings["notification"]["data"])
+        return template.render(
+            **__merge_details_and_data(
+                validation_response,
+                notification_data,
+            )
+        )
     return json.dumps(validation_response.details)
 
 
