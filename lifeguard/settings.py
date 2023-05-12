@@ -154,6 +154,11 @@ SETTINGS_MANAGER = SettingsManager(
             "type": "bool",
             "description": "Append all notifications to history",
         },
+        "PERMANENT_SESSION_LIFETIME": {
+            "default": "2678400",
+            "type": "int",
+            "description": "Session expiration time",
+        },
     }
 )
 
@@ -185,3 +190,4 @@ LIFEGUARD_SKIP_VALIDATIONS = SETTINGS_MANAGER.read_value("LIFEGUARD_SKIP_VALIDAT
 LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY = SETTINGS_MANAGER.read_value(
     "LIFEGUARD_APPEND_NOTIFICATION_TO_HISTORY"
 )
+PERMANENT_SESSION_LIFETIME = SETTINGS_MANAGER.read_value("PERMANENT_SESSION_LIFETIME")
