@@ -3,6 +3,7 @@ import unittest
 from unittest.mock import patch, call
 
 from lifeguard.settings import (
+    PERMANENT_SESSION_LIFETIME,
     LIFEGUARD_SERVER_PORT,
     LIFEGUARD_DIRECTORY,
     LIFEGUARD_RUN_ONLY_VALIDATIONS,
@@ -192,3 +193,14 @@ class SettingsTest(unittest.TestCase):
         )
         with self.assertRaises(AttributeNotFoundInSettings):
             settings.read_value("DYNAMIC__ATTRIBUTE")
+
+    def test_permanent_session_lifetime(self):
+        self.assertEqual(PERMANENT_SESSION_LIFETIME, 2678400)
+        self.assertEqual(
+            SETTINGS_MANAGER.settings["PERMANENT_SESSION_LIFETIME"]["type"],
+            "int",
+        )
+        self.assertEqual(
+            SETTINGS_MANAGER.settings["PERMANENT_SESSION_LIFETIME"]["description"],
+            "Session expiration time",
+        )

@@ -1,6 +1,6 @@
 import json
 import traceback
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import Flask, make_response
 
@@ -8,11 +8,12 @@ from lifeguard import NORMAL, change_status
 from lifeguard.controllers import custom_controllers, login_required
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.repositories import ValidationRepository
-from lifeguard.settings import LIFEGUARD_SECRET_KEY
+from lifeguard.settings import LIFEGUARD_SECRET_KEY, PERMANENT_SESSION_LIFETIME
 from lifeguard.validations import VALIDATIONS, ValidationResponseEncoder
 
 APP = Flask(__name__)
 APP.secret_key = LIFEGUARD_SECRET_KEY
+APP.config["PERMANENT_SESSION_LIFETIME"] = timedelta(seconds=PERMANENT_SESSION_LIFETIME)
 
 
 def make_json_response(content):
