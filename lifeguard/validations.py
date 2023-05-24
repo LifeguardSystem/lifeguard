@@ -142,6 +142,8 @@ def validation(
     """
     Decorator to configure a validation
     """
+    if not settings:
+        settings = {}
 
     def function_reference(decorated):
         @wraps(decorated)
