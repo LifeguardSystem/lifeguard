@@ -160,6 +160,33 @@ class TestActionNotification(unittest.TestCase):
         mock_implementation.send_single_message.assert_not_called()
 
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
+    @patch("lifeguard.actions.notifications.logger", mock_logger)
+    @patch("lifeguard.actions.notifications.NotificationRepository")
+    def test_should_send_notify_in_thread_message_when_error_using_traceback(
+        self, mock_notification_repository
+    ):
+        notification_repository_instance = MagicMock(name="repository")
+        mock_notification_repository.return_value = notification_repository_instance
+        notification_repository_instance.fetch_last_notification_for_a_validation.return_value = (
+            None
+        )
+
+        self.mock_validation_response.status = PROBLEM
+        self.mock_validation_response.settings = {}
+        self.mock_validation_response.details = {
+            "traceback": "traceback",
+            "use_error_template": True,
+        }
+
+        self.mock_settings["notification"] = {"template_error": """*{{traceback}}*"""}
+
+        notify_in_thread(self.mock_validation_response, self.mock_settings)
+
+        mock_implementation.init_thread.assert_called_with(
+            "*traceback*", {"notification": {"template_error": "*{{traceback}}*"}}
+        )
+
+    @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", NOTIFICATION_METHODS)
     @patch("lifeguard.actions.notifications.json")
     @patch("lifeguard.actions.notifications.NotificationRepository")
     @patch("lifeguard.actions.notifications.logger", mock_logger)

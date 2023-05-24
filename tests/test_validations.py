@@ -9,6 +9,10 @@ from lifeguard.validations import (
     VALIDATIONS,
 )
 
+from tests.fixtures.validations.simple_validation_with_action_on_errors import (
+    ON_ERROR_ACTION_MOCK,
+)
+
 
 class TestValidationResponse(unittest.TestCase):
     def test_validation_response_object(self):
@@ -131,7 +135,7 @@ class TestValidations(unittest.TestCase):
         mock_traceback.format_exc.return_value = "traceback"
         load_validations()
         result = VALIDATIONS["simple_with_invalid_action_validation"]["ref"]()
-        mock_logger.warning.assert_called_with(
+        mock_logger.error.assert_called_with(
             "validation error %s: %s",
             "simple_with_invalid_action_validation",
             "invalid_action() takes 0 positional arguments but 2 were given",
@@ -140,18 +144,28 @@ class TestValidations(unittest.TestCase):
         self.assertIsNone(result)
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch("lifeguard.validations.logger")
     @patch("lifeguard.validations.traceback")
-    def test_execute_validation_with_on_exception_settings(self, mock_traceback):
+    def test_execute_validation_with_error_and_error_actions(
+        self, mock_traceback, mock_logger
+    ):
         mock_traceback.format_exc.return_value = "traceback"
         load_validations()
-        result = VALIDATIONS["validation_with_on_exception_settings"]["ref"]()
+        VALIDATIONS["simple_validation_with_action_on_errors"]["ref"]()
+
+        response = ON_ERROR_ACTION_MOCK.mock_calls[0][1][0]
+        settings = ON_ERROR_ACTION_MOCK.mock_calls[0][1][1]
+
         self.assertEqual(
-            result.__dict__,
+            response.validation_name, "simple_validation_with_action_on_errors"
+        )
+        self.assertEqual(
+            response.details,
             {
-                "_details": {"traceback": "traceback"},
-                "_last_execution": None,
-                "_settings": None,
-                "_status": "PROBLEM",
-                "_validation_name": "validation_with_on_exception_settings",
+                "exception": "error",
+                "traceback": "traceback",
+                "use_error_template": True,
             },
         )
+        self.assertEqual(response.status, "PROBLEM")
+        self.assertEqual(settings, {})

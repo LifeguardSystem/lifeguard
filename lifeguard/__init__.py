@@ -5,6 +5,7 @@ import importlib
 import sys
 
 from lifeguard.logger import lifeguard_logger as logger
+from lifeguard.statuses import NORMAL, WARNING, PROBLEM, ACTION_STATUSES, change_status
 from lifeguard.settings import (
     LIFEGUARD_DIRECTORY,
     SETTINGS_MANAGER,
@@ -13,21 +14,6 @@ from lifeguard.settings import (
 from lifeguard.controllers import load_custom_controllers
 from lifeguard.controllers.assets import load_assets_controllers
 from lifeguard.validations import load_validations
-
-NORMAL = "NORMAL"
-WARNING = "WARNING"
-PROBLEM = "PROBLEM"
-
-ACTION_STATUSES = [NORMAL, WARNING, PROBLEM]
-
-
-def change_status(old, new):
-    """
-    Change status by severity
-    """
-    if ACTION_STATUSES.index(new) > ACTION_STATUSES.index(old):
-        return new
-    return old
 
 
 def recover_settings():

@@ -10,9 +10,20 @@ from lifeguard.settings import (
     LIFEGUARD_RUN_ONLY_VALIDATIONS,
     LIFEGUARD_SKIP_VALIDATIONS,
 )
+from lifeguard.statuses import PROBLEM
 from lifeguard.utils import build_import
 
 VALIDATIONS = {}
+
+
+def __execute_actions(actions, result, settings):
+    for action in actions or []:
+        logger.info(
+            "executing action %s with result %s...",
+            str(action.__name__),
+            str(result),
+        )
+        action(result, settings)
 
 
 class ValidationResponse:
@@ -109,7 +120,7 @@ def load_validations():
     """
     Load validations from application path
     """
-    for (root, dirs, files) in os.walk(
+    for (root, _dirs, files) in os.walk(
         os.path.join(LIFEGUARD_DIRECTORY, "validations")
     ):
         root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
@@ -125,10 +136,14 @@ def load_validations():
                     __import__(module)
 
 
-def validation(description=None, actions=None, schedule=None, settings=None):
+def validation(
+    description=None, actions=None, schedule=None, settings=None, actions_on_error=None
+):
     """
     Decorator to configure a validation
     """
+    if not settings:
+        settings = {}
 
     def function_reference(decorated):
         @wraps(decorated)
@@ -154,46 +169,29 @@ def validation(description=None, actions=None, schedule=None, settings=None):
                     return None
 
                 result = decorated(*args, **kwargs)
-                for action in actions or []:
-                    logger.info(
-                        "executing action %s with result %s...",
-                        str(action.__name__),
-                        str(result),
-                    )
-                    action(result, settings)
+                __execute_actions(actions, result, settings)
 
                 return result
             except Exception as exception:
-                logger.warning(
+                logger.error(
                     "validation error %s: %s",
                     str(decorated.__name__),
                     str(exception),
                     extra={"traceback": traceback.format_exc()},
                 )
-
-                on_exception = (settings or {}).get("on_exception", {})
-                if on_exception:
-                    result = on_exception["result"]
-
-                    if (
-                        "append_traceback_on_details" in on_exception
-                        and on_exception["append_traceback_on_details"]
-                    ):
-                        result.details["traceback"] = traceback.format_exc()
-
-                    if (
-                        "rerun_actions" in on_exception
-                        and on_exception["rerun_actions"]
-                    ):
-                        for action in actions or []:
-                            logger.info(
-                                "executing action %s with result %s...",
-                                str(action.__name__),
-                                str(result),
-                            )
-                            action(result, settings)
-
-                    return result
+                __execute_actions(
+                    actions_on_error,
+                    ValidationResponse(
+                        decorated.__name__,
+                        PROBLEM,
+                        {
+                            "exception": str(exception),
+                            "traceback": traceback.format_exc(),
+                            "use_error_template": True,
+                        },
+                    ),
+                    settings,
+                )
 
         VALIDATIONS[decorated.__name__] = {
             "ref": wrapped,
