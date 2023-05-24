@@ -50,7 +50,6 @@ class TestServer(unittest.TestCase):
     def test_get_validation_result(
         self, mock_validation_repository, mock_make_response
     ):
-
         mock_response = MagicMock(name="mock_response")
         mock_make_response.return_value = mock_response
 
@@ -66,7 +65,6 @@ class TestServer(unittest.TestCase):
     @patch("lifeguard.server.make_response")
     @patch("lifeguard.server.ValidationRepository")
     def test_get_status(self, mock_validation_repository, mock_make_response):
-
         mock_response = MagicMock(name="mock_response")
         mock_make_response.return_value = mock_response
 
@@ -87,7 +85,6 @@ class TestServer(unittest.TestCase):
     def test_get_status_validations_empty_when_normal(
         self, mock_validation_repository, mock_make_response
     ):
-
         mock_response = MagicMock(name="mock_response")
         mock_make_response.return_value = mock_response
 
@@ -104,7 +101,6 @@ class TestServer(unittest.TestCase):
     @patch("lifeguard.server.make_response")
     @patch("lifeguard.server.ValidationRepository")
     def test_get_status_complete(self, mock_validation_repository, mock_make_response):
-
         mock_response = MagicMock(name="mock_response")
         mock_make_response.return_value = mock_response
 
@@ -126,7 +122,6 @@ class TestServer(unittest.TestCase):
     def test_get_status_on_exception(
         self, mock_traceback, mock_validation_repository, mock_make_response
     ):
-
         mock_traceback.format_exc.return_value = "traceback"
 
         mock_response = MagicMock(name="mock_response")

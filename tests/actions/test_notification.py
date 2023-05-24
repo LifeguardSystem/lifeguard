@@ -45,7 +45,6 @@ NOTIFICATION_METHODS = [mock_notification_instance]
 
 class TestActionNotification(unittest.TestCase):
     def setUp(self):
-
         NOTIFICATION_METHODS[0].mock_implementation.reset_mock()
         self.mock_validation_response = MagicMock(name="mock_validation_response")
         self.mock_validation_response.settings = None
@@ -54,7 +53,6 @@ class TestActionNotification(unittest.TestCase):
     @patch("lifeguard.actions.notifications.NOTIFICATION_METHODS", [])
     @patch("lifeguard.actions.notifications.logger", mock_logger)
     def test_should_not_send_notify_in_single_message(self):
-
         notify_in_single_message(self.mock_validation_response, self.mock_settings)
         mock_implementation.send_single_message.assert_not_called()
 
@@ -266,7 +264,6 @@ class TestActionNotification(unittest.TestCase):
         mock_json,
         mock_deepcopy,
     ):
-
         history_repository_instance = MagicMock(name="history_repository")
         mock_history_repository.return_value = history_repository_instance
 

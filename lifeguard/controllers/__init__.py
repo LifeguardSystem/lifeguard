@@ -24,7 +24,6 @@ custom_controllers = Blueprint("custom", __name__)
 
 
 def build_content_from_template(template, searchpath, data=None):
-
     if not data:
         data = {}
 
@@ -223,9 +222,7 @@ def load_custom_controllers():
 
     if not os.path.exists(os.path.join(LIFEGUARD_DIRECTORY, "controllers")):
         return
-    for (root, _dirs, files) in os.walk(
-        os.path.join(LIFEGUARD_DIRECTORY, "controllers")
-    ):
+    for root, _dirs, files in os.walk(os.path.join(LIFEGUARD_DIRECTORY, "controllers")):
         root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
         for controller_file in files:
             if controller_file.endswith("_controller.py"):

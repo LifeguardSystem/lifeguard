@@ -111,7 +111,6 @@ class TestControllers(unittest.TestCase):
 
     @patch("lifeguard.controllers.jinja2")
     def test_build_content_from_template(self, mock_jinja2):
-
         template_loader = MagicMock(name="template_loader")
         mock_jinja2.FileSystemLoader.return_value = template_loader
 
@@ -129,7 +128,6 @@ class TestControllers(unittest.TestCase):
 
     @patch("lifeguard.controllers.jinja2")
     def test_build_content_from_template_with_data(self, mock_jinja2):
-
         template_loader = MagicMock(name="template_loader")
         mock_jinja2.FileSystemLoader.return_value = template_loader
 
@@ -181,7 +179,6 @@ class TestControllers(unittest.TestCase):
     @patch("lifeguard.controllers.AUTHENTICATION_METHODS", MOCK_AUTHENTICATION_METHODS)
     @patch("lifeguard.controllers.LIFEGUARD_CONTEXT")
     def test_login_required_wrap_controller(self, mock_lifeguard_context):
-
         mock_lifeguard_context.auth_method = "basic_auth"
         MOCK_AUTHENTICATION_METHODS["basic_auth"].return_value = False
 
@@ -194,7 +191,6 @@ class TestControllers(unittest.TestCase):
     @patch("lifeguard.controllers.AUTHENTICATION_METHODS", MOCK_AUTHENTICATION_METHODS)
     @patch("lifeguard.controllers.LIFEGUARD_CONTEXT")
     def test_login_required_not_wrap_controller(self, mock_lifeguard_context):
-
         mock_lifeguard_context.auth_method = None
 
         a_function = MagicMock(name="a_function")
@@ -226,7 +222,6 @@ class TestControllers(unittest.TestCase):
         )
 
     def test_render_template_with_params(self):
-
         response = render_template(
             "template.html",
             data={"test": "test"},
@@ -249,7 +244,6 @@ class TestControllers(unittest.TestCase):
         )
 
     def test_send_status(self):
-
         response = send_status(404)
 
         self.assertDictEqual(
@@ -267,7 +261,6 @@ class TestControllers(unittest.TestCase):
         )
 
     def test_response_set_cookie(self):
-
         response = send_status(201)
         response.set_cookie("session", "value")
 
@@ -286,7 +279,6 @@ class TestControllers(unittest.TestCase):
         )
 
     def test_response_set_cookie_with_options(self):
-
         response = send_status(201)
         response.set_cookie("session", "value", {"expires": 5})
 

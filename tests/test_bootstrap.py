@@ -7,7 +7,6 @@ from lifeguard.bootstrap import generate_base_project
 class TestBootstrap(unittest.TestCase):
     @patch("lifeguard.bootstrap.os")
     def test_generate_base_project(self, mock_os):
-
         mock_os.path.exists.return_value = False
 
         mocked_open = mock_open()

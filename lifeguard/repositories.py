@@ -62,7 +62,6 @@ class HistoryRepository(BaseRepository):
 
 
 def declare_implementation(repository, implementation):
-
     if repository in IMPLEMENTATIONS:
         logger.warning("overwriting implementation for respository %s", repository)
     logger.info(

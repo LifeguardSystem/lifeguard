@@ -120,9 +120,7 @@ def load_validations():
     """
     Load validations from application path
     """
-    for (root, _dirs, files) in os.walk(
-        os.path.join(LIFEGUARD_DIRECTORY, "validations")
-    ):
+    for root, _dirs, files in os.walk(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
         root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
         for validation_file in files:
             if validation_file.endswith("_validation.py"):
@@ -149,7 +147,6 @@ def validation(
         @wraps(decorated)
         def wrapped(*args, **kwargs):
             try:
-
                 if LIFEGUARD_RUN_ONLY_VALIDATIONS and (
                     decorated.__name__ not in LIFEGUARD_RUN_ONLY_VALIDATIONS
                 ):
