@@ -19,7 +19,7 @@ class TestValidationResponse(unittest.TestCase):
         details = {}
         settings = {}
 
-        response = ValidationResponse("name", NORMAL, details, settings)
+        response = ValidationResponse(NORMAL, details, settings, validation_name="name")
 
         self.assertEqual(response.validation_name, "name")
         self.assertEqual(response.status, "NORMAL")
@@ -27,7 +27,7 @@ class TestValidationResponse(unittest.TestCase):
         self.assertEqual(response.settings, settings)
 
     def test_validation_response_to_str(self):
-        response = ValidationResponse("name", NORMAL, {}, {})
+        response = ValidationResponse(NORMAL, {}, {}, validation_name="name")
         self.assertEqual(
             str(response),
             "{'validation_name': 'name', 'status': 'NORMAL', 'details': {}, 'settings': {}}",
