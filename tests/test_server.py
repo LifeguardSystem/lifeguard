@@ -12,7 +12,7 @@ from lifeguard.server import (
 from lifeguard.validations import ValidationResponse
 
 test_validation = MagicMock(name="test_validation")
-test_validation.return_value = ValidationResponse("test_validation", NORMAL, {})
+test_validation.return_value = ValidationResponse(NORMAL, {})
 
 VALIDATIONS = {"test_validation": {"ref": test_validation}}
 
@@ -56,7 +56,7 @@ class TestServer(unittest.TestCase):
         mock_repository_instance = MagicMock(name="mock_repository_instance")
         mock_validation_repository.return_value = mock_repository_instance
         mock_repository_instance.fetch_last_validation_result.return_value = (
-            ValidationResponse("test_validation", NORMAL, {})
+            ValidationResponse(NORMAL, {})
         )
 
         response = get_validation("test_validation")
@@ -71,7 +71,7 @@ class TestServer(unittest.TestCase):
         mock_repository_instance = MagicMock(name="mock_repository_instance")
         mock_validation_repository.return_value = mock_repository_instance
         mock_repository_instance.fetch_all_validation_results.return_value = [
-            ValidationResponse("test_validation", PROBLEM, {})
+            ValidationResponse(PROBLEM, {}, validation_name="test_validation")
         ]
 
         response = get_status()
@@ -91,7 +91,7 @@ class TestServer(unittest.TestCase):
         mock_repository_instance = MagicMock(name="mock_repository_instance")
         mock_validation_repository.return_value = mock_repository_instance
         mock_repository_instance.fetch_all_validation_results.return_value = [
-            ValidationResponse("test_validation", NORMAL, {})
+            ValidationResponse(NORMAL, {})
         ]
 
         response = get_status()
@@ -107,7 +107,7 @@ class TestServer(unittest.TestCase):
         mock_repository_instance = MagicMock(name="mock_repository_instance")
         mock_validation_repository.return_value = mock_repository_instance
         mock_repository_instance.fetch_all_validation_results.return_value = [
-            ValidationResponse("test_validation", NORMAL, {})
+            ValidationResponse(NORMAL, {}, validation_name="test_validation")
         ]
 
         response = get_status_complete()

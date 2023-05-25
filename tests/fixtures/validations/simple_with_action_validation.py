@@ -8,4 +8,4 @@ def simple_action(_response, _settings):
 
 @validation(description="simple description", actions=[simple_action], settings={})
 def simple_with_action_validation():
-    return ValidationResponse("simple_with_action_validation", NORMAL, {})
+    return ValidationResponse(NORMAL, {})

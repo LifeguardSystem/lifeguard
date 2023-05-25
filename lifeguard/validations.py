@@ -32,13 +32,13 @@ class ValidationResponse:
     """
 
     def __init__(
-        self, validation_name, status, details, settings=None, last_execution=None
+        self, status, details, settings=None, last_execution=None, validation_name=None
     ):
-        self._validation_name = validation_name
         self._status = status
         self._details = details
         self._settings = settings
         self._last_execution = last_execution
+        self._validation_name = validation_name
 
     @property
     def validation_name(self):
@@ -74,6 +74,13 @@ class ValidationResponse:
         Return last execution
         """
         return self._last_execution
+
+    @validation_name.setter
+    def validation_name(self, value):
+        """
+        Setter for validation name
+        """
+        self._validation_name = value
 
     @last_execution.setter
     def last_execution(self, value):
@@ -166,6 +173,7 @@ def validation(
                     return None
 
                 result = decorated(*args, **kwargs)
+                result.validation_name = decorated.__name__
                 __execute_actions(actions, result, settings)
 
                 return result
@@ -179,13 +187,13 @@ def validation(
                 __execute_actions(
                     actions_on_error,
                     ValidationResponse(
-                        decorated.__name__,
                         PROBLEM,
                         {
                             "exception": str(exception),
                             "traceback": traceback.format_exc(),
                             "use_error_template": True,
                         },
+                        validation_name=decorated.__name__,
                     ),
                     settings,
                 )
