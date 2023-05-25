@@ -3,7 +3,6 @@
 ![Build Status](https://github.com/LifeguardSystem/lifeguard/workflows/Lifeguard%20Core%20CI/badge.svg)
 ![Lifeguard Core Publish](https://github.com/LifeguardSystem/lifeguard/workflows/Lifeguard%20Core%20Publish/badge.svg)
 [![PyPI version](https://badge.fury.io/py/lifeguard.svg)](https://badge.fury.io/py/lifeguard)
-[![SourceLevel](https://app.sourcelevel.io/github/LifeguardSystem/-/lifeguard.svg)](https://app.sourcelevel.io/github/LifeguardSystem/-/lifeguard)
 
 ## Examples of Usage
 
