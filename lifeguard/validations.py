@@ -10,7 +10,7 @@ from lifeguard.settings import (
     LIFEGUARD_RUN_ONLY_VALIDATIONS,
     LIFEGUARD_SKIP_VALIDATIONS,
 )
-from lifeguard.statuses import PROBLEM
+from lifeguard.statuses import PROBLEM, ACTION_STATUSES
 from lifeguard.utils import build_import
 
 VALIDATIONS = {}
@@ -34,7 +34,7 @@ class ValidationResponse:
     def __init__(
         self, status, details, settings=None, last_execution=None, validation_name=None
     ):
-        self._status = status
+        self._status = self.__validate_status(status)
         self._details = details
         self._settings = settings
         self._last_execution = last_execution
@@ -108,6 +108,11 @@ class ValidationResponse:
 
     def __str__(self):
         return str(self.get_attributes())
+
+    def __validate_status(self, status):
+        if status not in ACTION_STATUSES:
+            raise ValueError(f"{status} is not a valid status")
+        return status
 
 
 class ValidationResponseEncoder(JSONEncoder):

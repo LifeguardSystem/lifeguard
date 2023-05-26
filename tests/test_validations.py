@@ -33,6 +33,12 @@ class TestValidationResponse(unittest.TestCase):
             "{'validation_name': 'name', 'status': 'NORMAL', 'details': {}, 'settings': {}}",
         )
 
+    def test_validate_status_value(self):
+        with self.assertRaises(ValueError) as error:
+            ValidationResponse("INVALID", {}, {})
+
+        self.assertEquals(str(error.exception), "INVALID is not a valid status")
+
 
 class TestValidations(unittest.TestCase):
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
