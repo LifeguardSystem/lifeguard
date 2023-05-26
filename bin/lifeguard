@@ -69,6 +69,18 @@ if __name__ == "__main__":
         help="generate base of lifeguard instance project",
         action="store_true",
     )
+    parser.add_argument(
+        "-q",
+        "--no-scheduler",
+        help="execute lifeguard without scheduler",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-s",
+        "--no-server",
+        help="execute lifeguard without server",
+        action="store_true",
+    )
     args = parser.parse_args()
 
     if args.generate:
@@ -83,14 +95,16 @@ if __name__ == "__main__":
         display_settings()
         sys.exit(0)
 
-    scheduler()
+    if not args.no_scheduler:
+        scheduler()
 
-    from lifeguard.server import APP
+    if not args.no_server:
+        from lifeguard.server import APP
 
-    StandaloneApplication(
-        APP,
-        {
-            "bind": "{}:{}".format("0.0.0.0", LIFEGUARD_SERVER_PORT),
-            "workers": number_of_workers(),
-        },
-    ).run()
+        StandaloneApplication(
+            APP,
+            {
+                "bind": "{}:{}".format("0.0.0.0", LIFEGUARD_SERVER_PORT),
+                "workers": number_of_workers(),
+            },
+        ).run()
