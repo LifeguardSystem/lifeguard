@@ -33,8 +33,11 @@ def number_of_workers():
 
 
 # Scheduler
-def scheduler():
-    _thread.start_new_thread(start_scheduler, ())
+def scheduler(start_in_thread):
+    if start_in_thread:
+        _thread.start_new_thread(start_scheduler, ())
+    else:
+        start_scheduler()
 
 
 # Server
@@ -96,7 +99,8 @@ if __name__ == "__main__":
         sys.exit(0)
 
     if not args.no_scheduler:
-        scheduler()
+        start_in_thread = not args.no_server
+        scheduler(start_in_thread)
 
     if not args.no_server:
         from lifeguard.server import APP

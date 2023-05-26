@@ -97,13 +97,17 @@ This file should be in the `controllers` directory and should ends with `_contro
 
 Execute: `lifeguard`
 
+To init only web server: `lifeguard --no-scheduler`
+
+To init only scheduler: `lifeguard --no-server`
+
 ### Settings
 
 To see all settings avaiable run command:
 
 `lifeguard -d`
 
-## Builtin Endpoints 
+## Builtin Endpoints
 
 ### Recover Status
 
