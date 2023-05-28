@@ -200,40 +200,139 @@ def setup(lifeguard_context):
         </div>
       </div>
     </section>
-    <!-- Testimonials section-->
-    <!--
-    <section class="py-5 border-bottom">
-      <div class="container px-5 my-5 px-5">
-        <div class="text-center mb-5">
-          <h2 class="fw-bolder">Customer testimonials</h2>
-          <p class="lead mb-0">Our customers love working with us</p>
-        </div>
-        <div class="row gx-5 justify-content-center">
-          <div class="col-lg-6">
-            <div class="card mb-4">
-              <div class="card-body p-4">
-                <div class="d-flex">
-                  <div class="flex-shrink-0">
-                    <i
-                      class="bi bi-chat-right-quote-fill text-primary fs-1"
-                    ></i>
-                  </div>
-                  <div class="ms-4">
-                    <p class="mb-1">
-                      Thank you for putting together such a great product. We
-                      loved working with you and the whole team, and we will be
-                      recommending you to others!
-                    </p>
-                    <div class="small text-muted">- Client Name, Location</div>
-                  </div>
-                </div>
-              </div>
-            </div>
+    <!-- first validation -->
+    <section class="py-5 border-bottom" id="validation">
+      <div class="container px-5 my-5">
+        <div class="row gx-5">
+          <div class="col-lg-8 mb-5 mb-lg-0">
+            <h2>Simple Example Validation</h2>
+            <pre><code class="language-python">from lifeguard import NORMAL, PROBLEM, change_status
+from lifeguard.actions.database import save_result_into_database
+from lifeguard.http_client import get
+from lifeguard.logger import lifeguard_logger as logger
+from lifeguard.validations import ValidationResponse, validation
+
+
+# The validation decorator is used to register a new validation.
+# The schedule parameter is used to define when the validation will be executed.
+# The actions parameter is used to define what actions will be
+# executed after the validation.
+# The validation function must return a ValidationResponse object.
+# The file with validation must be in the folder validations and
+# must be named with "_validation.py" suffix.
+@validation(
+    "check if pudim is alive",
+    actions=[save_result_into_database],
+    schedule={"every": {"minutes": 1}},
+)
+def pudim_is_alive():
+    status = NORMAL
+    result = requests.get("http://pudim.com.br")
+    logger.info("pudim status code: %s", result.status_code)
+
+    if result.status_code != 200:
+        status = change_status(status, PROBLEM)
+
+    return ValidationResponse(
+        status,
+        {status: result.status_code},
+    )
+</code></pre>
+          </div>
+          <div class="col-lg-4">
+            <p>To execute the validation, run the command:</p>
+            <pre><code class="language-bash">lifeguard</code></pre>
+            <p>
+              The validation will be executed every minute and the result will
+              be saved in the database. You can see the result in the
+              <a href="http://localhost:5567/lifeguard/status/complete"
+                >http://localhost:5567/lifeguard/status/complete</a
+              >. Not forget to use the user and password.
+            </p>
           </div>
         </div>
       </div>
     </section>
-    -->
+    <!-- plugins -->
+    <section class="py-5 border-bottom" id="plugins">
+      <div class="container px-5 my-5">
+        <div class="row gx-5">
+          <div class="col-lg-12">
+            <h2>Built Plugins</h2>
+          </div>
+        </div>
+        <div class="row gx-5">
+          <div class="col-lg-4 mb-5 mb-lg-0">
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-mongodb"
+                >MongoDB
+              </a>
+            </h3>
+            <p>
+              This plugin is used to store the results of validations in a
+              MongoDB database.
+            </p>
+
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-tinydb"
+                >TinyDB
+              </a>
+            </h3>
+            <p>
+              This plugin is used to store the results of validations in a
+              TinyDB database. TinyDB produces a single json file with data.
+            </p>
+          </div>
+          <div class="col-lg-4 mb-5 mb-lg-0">
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-notification-google-chat"
+                >Google Chat Notification
+              </a>
+            </h3>
+            <p>This plugin is used to send notifications to Google Chat.</p>
+
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-notification-msteams"
+                >MS Teams Notification
+              </a>
+            </h3>
+            <p>This plugin is used to send notifications to MS Teams.</p>
+          </div>
+          <div class="col-lg-4">
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-rabbitmq"
+                >RabbitMQ
+              </a>
+            </h3>
+            <p>
+              This plugin contains some common validations for RabbitMQ queues.
+            </p>
+
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-simple-dashboard"
+                >Simple Dashboard
+              </a>
+            </h3>
+            <p>
+              This plugin is used to create a simple dashboard with the results
+              of validations. Used as example to build a simple GUI.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- Footer-->
     <footer class="py-5 bg-dark">
       <div class="container px-5">

@@ -36,10 +36,10 @@ To create a validation you should create a file into `validations` directory. Th
 Example:
 
 ```python
-import requests
 from lifeguard import NORMAL, PROBLEM, change_status
 from lifeguard.actions.database import save_result_into_database
 from lifeguard.actions.notifications import notify_in_single_message
+from lifeguard.http_client import get
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.validations import ValidationResponse, validation
 
@@ -58,10 +58,8 @@ def pudim_is_alive():
         status = change_status(status, PROBLEM)
 
     return ValidationResponse(
-        "pudim_is_alive",
-        NORMAL,
+        status,
         {status: result.status_code},
-        {"notification": {"notify": True}},
     )
 ```
 
