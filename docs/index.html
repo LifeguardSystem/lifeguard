@@ -18,6 +18,11 @@
     />
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="css/styles.css" rel="stylesheet" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
+    />
   </head>
   <body>
     <!-- Responsive navbar-->
@@ -41,8 +46,8 @@
               <a
                 class="nav-link"
                 target="_blank"
-                href="https://github.com/LifeguardSystem/lifeguard"
-                >Core</a
+                href="https://github.com/LifeguardSystem"
+                >Github</a
               >
             </li>
             <li class="nav-item">
@@ -81,7 +86,7 @@
                 <a
                   class="btn btn-outline-light btn-lg px-4"
                   target="_blank"
-                  href="https://github.com/LifeguardSystem/lifeguard/wiki"
+                  href="https://github.com/LifeguardSystem/lifeguard#readme"
                   >Learn More</a
                 >
               </div>
@@ -116,7 +121,14 @@
               <i class="bi bi-search"></i>
             </div>
             <h2 class="h4 fw-bolder">Proactive Validations</h2>
-            <p></p>
+            <p>
+              Most monitoring systems work reactively, like the Grafana
+              Alertmanager solution, that is, based on things (in many cases,
+              errors) that have already happened that alerts are triggered.
+              Lifeguard's focus is on making it easy to create proactive
+              validations that can look for errors and send easily
+              understandable alerts.
+            </p>
           </div>
           <div class="col-lg-4">
             <div
@@ -125,7 +137,65 @@
               <i class="bi bi-toggles2"></i>
             </div>
             <h2 class="h4 fw-bolder">Deploy and Scale Easily</h2>
-            <p></p>
+            <p>
+              Lifeguard consists of two fundamental elements. A web server that
+              provides some APIs where you can provide a GUI (the GUI also works
+              based on plugins) and a queue, or queues, to perform validations.
+              Both can run together or not and can scale independently as
+              needed. Validations can be performed on specific instances of
+              queues. This organization makes it much easier to scale resources
+              depending on the type of use.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Initing a project -->
+    <section class="py-5 border-bottom" id="starting">
+      <div class="container px-5 my-5">
+        <div class="row gx-5">
+          <div class="col-lg-4 mb-5 mb-lg-0">
+            <h2>Starting a project</h2>
+            <p>
+              To start a project, you need to install the Lifeguard package
+              using pip:
+            </p>
+            <pre><code class="language-bash">pip install lifeguard
+</code></pre>
+            <p>
+              Create a new directory and create a main settings file used for
+              Lifeguard:
+            </p>
+            <pre><code class="language-bash">mkdir myproject
+cd myproject
+lifeguard -g
+</code></pre>
+            <p>
+              The <code>-g</code> parameter will create a new file called
+              <code>lifeguard_settings.py</code> with the initial structure. The
+              example in the right side is a example.
+            </p>
+          </div>
+          <div class="col-lg-8">
+            <pre><code class="language-python"># import lifeguard plugin for MongoDB
+# This plugin able the persistent results of validations
+# To use this plugin, you need to install it using pip
+# pip install lifeguard-mongodb
+import lifeguard_mongodb
+
+from lifeguard.settings import SettingsManager
+from lifeguard.auth import BASIC_AUTH_METHOD
+
+# list of plugins used by this instance
+PLUGINS = [lifeguard_mongodb]
+
+def setup(lifeguard_context):
+    # Register user and password for basic authentication
+    lifeguard_context.auth_method = BASIC_AUTH_METHOD
+    lifeguard_context.users = [
+        {"username": "user", "password": "pass"}
+    ]
+</code></pre>
           </div>
         </div>
       </div>
@@ -176,5 +246,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
     <script src="js/scripts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/languages/python.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
   </body>
 </html>
