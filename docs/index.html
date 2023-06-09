@@ -276,6 +276,62 @@ def pudim_is_alive():
         </div>
       </div>
     </section>
+    <!-- ai -->
+    <section class="py-5 border-bottom" id="settings">
+      <div class="container px-5 my-5">
+        <div class="row gx-5">
+          <div class="col-lg-4">
+            <h2>[Beta] Using OpenAI</h2>
+            <p>
+              The pictures shows the action executed after validation that uses
+              the OpenAI API to generate an explanation of the root cause of the
+              a given traceback.
+            </p>
+            <p>
+              A complete example can be found in this
+              <a
+                target="_blank"
+                href="https://github.com/diegorubin/lifeguard/blob/main/validations/pods_validation.py"
+                >validation</a
+              >. In this example the function
+              <code>pods_validation</code> investigates de problem in the events
+              of pods or in the pods logs and put problem in the details of
+              validation_response. The action in the
+              <code>lifeguard-openai</code> plugins use the tracebacks to
+              generate the explanation.
+            </p>
+          </div>
+
+          <div class="col-lg-8 mb-5 mb-lg-0">
+            <p>
+              In the output used as an example (sent to a Telegram channel) the
+              pod was in crash loop and the root cause explanation was generated
+              by the OpenAI API.
+            </p>
+            <p>
+              <img
+                src="assets/openai-pod-log.png"
+                class="img-fluid"
+                alt="Example of OpenAI"
+              />
+            </p>
+            <p>
+              In the next example, the first pod has an invalid image and the
+              pull is failing. The second pod has an invalid command to start
+              the container. Both explanations were generated based on events in
+              the pods.
+            </p>
+            <p>
+              <img
+                src="assets/openai-pod-events.png"
+                class="img-fluid"
+                alt="Example of OpenAI"
+              />
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
     <!-- plugins -->
     <section class="py-5 border-bottom" id="plugins">
       <div class="container px-5 my-5">
@@ -364,6 +420,19 @@ def pudim_is_alive():
             <p>
               This plugin is used to create a simple dashboard with the results
               of validations. Used as example to build a simple GUI.
+            </p>
+
+            <h3>
+              <a
+                target="_blank"
+                href="https://github.com/LifeguardSystem/lifeguard-openai"
+                >OpenAI
+              </a>
+            </h3>
+            <p>
+              This plugin provides actions to interact with OpenAI API. The
+              first action created is used to analize a traceback and explains
+              what is the problem.
             </p>
           </div>
         </div>
