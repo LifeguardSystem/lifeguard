@@ -5,7 +5,7 @@ from datetime import datetime, timedelta
 from flask import Flask, make_response
 
 from lifeguard import NORMAL, change_status
-from lifeguard.controllers import custom_controllers, login_required
+from lifeguard.controllers import custom_controllers, login_required, request
 from lifeguard.logger import lifeguard_logger as logger
 from lifeguard.repositories import ValidationRepository
 from lifeguard.settings import LIFEGUARD_SECRET_KEY, PERMANENT_SESSION_LIFETIME
@@ -63,10 +63,14 @@ def get_status_complete():
     return build_global_status(True)
 
 
-@APP.route("/lifeguard/validations/<validation>", methods=["GET"])
+@APP.route("/lifeguard/validations/<validation>", methods=["GET", "DELETE"])
 @login_required
-def get_validation(validation):
+def validation_endpoint(validation):
     repository = ValidationRepository()
+    if request.method == "DELETE":
+        repository.delete_validation_result(validation)
+        return make_json_response(json.dumps({"status": "ok"}))
+
     result = repository.fetch_last_validation_result(validation)
     return make_json_response(ValidationResponseEncoder().encode(result))
 

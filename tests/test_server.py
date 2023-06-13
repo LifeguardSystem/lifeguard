@@ -5,7 +5,7 @@ from unittest.mock import MagicMock, patch
 from lifeguard import NORMAL, PROBLEM
 from lifeguard.server import (
     execute_validation,
-    get_validation,
+    validation_endpoint,
     get_status,
     get_status_complete,
 )
@@ -47,9 +47,11 @@ class TestServer(unittest.TestCase):
 
     @patch("lifeguard.server.make_response")
     @patch("lifeguard.server.ValidationRepository")
-    def test_get_validation_result(
-        self, mock_validation_repository, mock_make_response
+    @patch("lifeguard.server.request")
+    def test_validation_endpoint_get_result(
+        self, mock_request, mock_validation_repository, mock_make_response
     ):
+        mock_request.method = "GET"
         mock_response = MagicMock(name="mock_response")
         mock_make_response.return_value = mock_response
 
@@ -59,8 +61,25 @@ class TestServer(unittest.TestCase):
             ValidationResponse(NORMAL, {})
         )
 
-        response = get_validation("test_validation")
+        response = validation_endpoint("test_validation")
         self.assertEqual(response, mock_response)
+
+    @patch("lifeguard.server.make_response")
+    @patch("lifeguard.server.ValidationRepository")
+    @patch("lifeguard.server.request")
+    def test_validation_endpoint_delete_result(
+        self, mock_request, mock_validation_repository, mock_make_response
+    ):
+        mock_request.method = "DELETE"
+
+        mock_repository_instance = MagicMock(name="mock_repository_instance")
+        mock_validation_repository.return_value = mock_repository_instance
+
+        validation_endpoint("test_validation")
+        mock_make_response.assert_called_with('{"status": "ok"}')
+        mock_repository_instance.delete_validation_result.assert_called_with(
+            "test_validation"
+        )
 
     @patch("lifeguard.server.make_response")
     @patch("lifeguard.server.ValidationRepository")

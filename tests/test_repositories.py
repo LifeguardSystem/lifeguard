@@ -128,6 +128,11 @@ class TestValidationRepositories(unittest.TestCase):
         self.validation_repository.fetch_all_validation_results()
         self.implementation.fetch_all_validation_results.assert_called()
 
+    def test_validation_repository_delete_validation_result(self):
+        validation_name = MagicMock(name="validation_name")
+        self.validation_repository.delete_validation_result(validation_name)
+        self.implementation.delete_validation_result(validation_name)
+
 
 class TestRepositoriesFunctions(unittest.TestCase):
     def setUp(self):

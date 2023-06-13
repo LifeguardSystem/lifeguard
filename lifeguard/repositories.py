@@ -27,6 +27,11 @@ class ValidationRepository(BaseRepository):
     def fetch_all_validation_results(self):
         return self.__implementation__.fetch_all_validation_results()
 
+    def delete_validation_result(self, validation_name):
+        if hasattr(self.__implementation__, "delete_validation_result"):
+            return self.__implementation__.delete_validation_result(validation_name)
+        logger.warn("delete_validation_result not implemented")
+
 
 class NotificationRepository(BaseRepository):
     def __init__(self):
