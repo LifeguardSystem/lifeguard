@@ -4,3 +4,4 @@ schedule==0.6.0
 requests==2.31.0
 tabulate==0.8.7
 markupsafe==2.1.1
+PyYAML==6.0

@@ -16,7 +16,14 @@ setup(
     description="Application to monitor your systems and give you the security to sleep peacefully at night",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    install_requires=["flask", "schedule", "gunicorn", "requests", "tabulate"],
+    install_requires=[
+        "flask",
+        "schedule",
+        "gunicorn",
+        "requests",
+        "tabulate",
+        "PyYAML",
+    ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
