@@ -1,0 +1,29 @@
+validations:
+  - validation_name: "simple_validation_with_action_in_yaml"
+    description: "simple description in yaml"
+    actions:
+      - tests.fixtures.validations.shared.common_validation.common_action
+    schedule:
+      every:
+        minutes: 1
+    settings:
+      notification:
+        update_thread_interval: 3600
+    execute:
+      command: tests.fixtures.validations.shared.common_validation.common_validation
+      args:
+        - "arg"
+  - validation_name: "simple_validation_with_error_in_yaml"
+    description: "simple description in yaml"
+    actions:
+      - tests.fixtures.validations.shared.common_validation.common_action
+    schedule:
+      every:
+        minutes: 1
+    settings:
+      notification:
+        update_thread_interval: 3600
+    execute:
+      command: tests.fixtures.validations.shared.common_validation.not_exists
+      args:
+        - "arg"

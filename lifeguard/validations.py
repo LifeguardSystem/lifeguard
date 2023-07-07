@@ -1,6 +1,8 @@
 import os
+import yaml
 import sys
 import traceback
+from os.path import join
 from json import JSONEncoder
 from functools import wraps
 
@@ -24,6 +26,51 @@ def __execute_actions(actions, result, settings):
             str(result),
         )
         action(result, settings)
+
+
+def __load_function_from_module(module_name_with_function_name):
+    module_path, function_name = module_name_with_function_name.rsplit(".", 1)
+
+    function = __import__(module_path)
+
+    module_path = module_path.split(".")
+    for module in module_path[1:]:
+        function = getattr(function, module)
+
+    return getattr(function, function_name)
+
+
+def __build_validation_function(command_function, args):
+    def validation_function():
+        command = __load_function_from_module(command_function)
+        return command(args)
+
+    return validation_function
+
+
+def __build_validation_from_settings(validation_yaml_file):
+    with open(validation_yaml_file) as file:
+        validation_list_from_file = yaml.load(file, Loader=yaml.FullLoader)
+
+    for validation_settings in validation_list_from_file["validations"]:
+        logger.info(
+            "loading validation %s from yaml file",
+            validation_settings["validation_name"],
+        )
+        validation_settings["actions"] = [
+            __load_function_from_module(action)
+            for action in validation_settings["actions"]
+        ]
+
+        command_settings = validation_settings.pop("execute")
+
+        validation_function = __build_validation_function(
+            command_settings["command"], *command_settings["args"]
+        )
+
+        validation_function.__name__ = validation_settings.pop("validation_name")
+
+        validation(**validation_settings)(validation_function)
 
 
 class ValidationResponse:
@@ -133,17 +180,20 @@ def load_validations():
     Load validations from application path
     """
     for root, _dirs, files in os.walk(os.path.join(LIFEGUARD_DIRECTORY, "validations")):
-        root = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
+        relative_path = os.path.relpath(root, os.path.join(LIFEGUARD_DIRECTORY))
         for validation_file in files:
             if validation_file.endswith("_validation.py"):
                 validation_module_name = (
-                    f'{build_import(root, validation_file.replace(".py", ""))}'
+                    f'{build_import(relative_path, validation_file.replace(".py", ""))}'
                 )
                 logger.info("loading validation %s", validation_file.replace(".py", ""))
 
                 module = "%s" % (validation_module_name)
                 if module not in sys.modules:
                     __import__(module)
+
+            if validation_file.endswith("_validation.yaml"):
+                __build_validation_from_settings(join(root, validation_file))
 
 
 def validation(
@@ -189,19 +239,22 @@ def validation(
                     str(exception),
                     extra={"traceback": traceback.format_exc()},
                 )
+                validation_response_error = ValidationResponse(
+                    PROBLEM,
+                    {
+                        "exception": str(exception),
+                        "traceback": traceback.format_exc(),
+                        "use_error_template": True,
+                    },
+                    validation_name=decorated.__name__,
+                )
                 __execute_actions(
                     actions_on_error,
-                    ValidationResponse(
-                        PROBLEM,
-                        {
-                            "exception": str(exception),
-                            "traceback": traceback.format_exc(),
-                            "use_error_template": True,
-                        },
-                        validation_name=decorated.__name__,
-                    ),
+                    validation_response_error,
                     settings,
                 )
+
+                return validation_response_error
 
         VALIDATIONS[decorated.__name__] = {
             "ref": wrapped,

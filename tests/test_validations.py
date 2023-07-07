@@ -1,8 +1,8 @@
 import unittest
 
-from unittest.mock import patch
+from unittest.mock import patch, call
 
-from lifeguard import NORMAL
+from lifeguard import NORMAL, PROBLEM
 from lifeguard.validations import (
     ValidationResponse,
     load_validations,
@@ -77,6 +77,33 @@ class TestValidations(unittest.TestCase):
         )
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch("tests.fixtures.validations.shared.common_validation.logger")
+    def test_execute_validation_with_action_defined_from_yaml(self, mock_logger):
+        load_validations()
+        response = VALIDATIONS["simple_validation_with_action_in_yaml"]["ref"]()
+        self.assertEqual(response.status, NORMAL)
+        self.assertEqual(response.details, {"arg": "arg"})
+        self.assertEqual(
+            VALIDATIONS["simple_validation_with_action_in_yaml"]["settings"],
+            {"notification": {"update_thread_interval": 3600}},
+        )
+        self.assertEqual(
+            VALIDATIONS["simple_validation_with_action_in_yaml"]["schedule"],
+            {"every": {"minutes": 1}},
+        )
+        mock_logger.info.assert_has_calls(
+            [
+                call("common action executed"),
+            ]
+        )
+
+    @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    def test_execute_validation_with_action_defined_from_yaml_when_error(self):
+        load_validations()
+        response = VALIDATIONS["simple_validation_with_error_in_yaml"]["ref"]()
+        self.assertEqual(response.status, PROBLEM)
+
+    @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch(
         "lifeguard.validations.LIFEGUARD_RUN_ONLY_VALIDATIONS",
         ["simple_with_action_validation"],
@@ -147,7 +174,7 @@ class TestValidations(unittest.TestCase):
             "invalid_action() takes 0 positional arguments but 2 were given",
             extra={"traceback": "traceback"},
         )
-        self.assertIsNone(result)
+        self.assertEqual(result.status, PROBLEM)
 
     @patch("lifeguard.validations.LIFEGUARD_DIRECTORY", "tests/fixtures")
     @patch("lifeguard.validations.logger")
