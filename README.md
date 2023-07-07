@@ -63,6 +63,27 @@ def pudim_is_alive():
     )
 ```
 
+Starting with version 1.3.0, it is possible to create validations using yaml files. The file should ends with `_validation.yaml`. See the example:
+
+```yaml
+validations:
+  - validation_name: "validation_name"
+    description: "description of validation"
+    actions:
+      - lifeguard.actions.database.save_result_into_database
+    schedule:
+      every:
+        minutes: 1
+    settings:
+      notification:
+        update_thread_interval: 3600
+    execute:
+      command: path.to.module.function
+      args:
+        - "arg1"
+        - "arg2"
+```
+
 ### Validation Actions
 
 Action is a simple python function with only 2 arguments: a validation response and a dict called settings. These settings are the parameter called settings in validation.
