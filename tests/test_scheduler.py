@@ -104,17 +104,23 @@ class TestScheduler(unittest.TestCase):
             ],
         )
 
+    @patch("lifeguard.scheduler.clear_validations")
     @patch("lifeguard.scheduler.load_validations")
     @patch("lifeguard.scheduler.configure_validations")
     @patch("lifeguard.scheduler.schedule")
     def test_reload_scheduler(
-        self, mock_schedule, mock_configure_validations, mock_load_validations
+        self,
+        mock_schedule,
+        mock_configure_validations,
+        mock_load_validations,
+        mock_clear_validations,
     ):
         reload_scheduler()
 
         mock_schedule.clear.assert_called_with("validation")
         mock_configure_validations.assert_called_with()
         mock_load_validations.assert_called_with()
+        mock_clear_validations.assert_called_with()
 
     @patch("lifeguard.scheduler.FOREVER", False)
     @patch("lifeguard.scheduler.LIFEGUARD_DIRECTORY", "tests/fixtures")
@@ -167,4 +173,20 @@ class TestScheduler(unittest.TestCase):
                     "tests/fixtures/validations/simple_validation.yaml",
                 )
             ]
+        )
+
+    @patch(
+        "lifeguard.scheduler.WATCHED_FILES",
+        {"tests/fixtures/validations/not_exists.yaml": 1},
+    )
+    @patch("lifeguard.scheduler.LIFEGUARD_DIRECTORY", "tests/fixtures")
+    @patch("lifeguard.scheduler.reload_scheduler")
+    @patch("lifeguard.scheduler.logger")
+    def test_check_if_should_reload_with_file_removed(
+        self, mock_logger, mock_reload_scheduler
+    ):
+        check_if_should_reload()
+        mock_reload_scheduler.assert_called_with()
+        mock_logger.info.assert_has_calls(
+            [call("file removed %s", "tests/fixtures/validations/not_exists.yaml")]
         )

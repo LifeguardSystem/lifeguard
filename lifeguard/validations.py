@@ -175,6 +175,13 @@ class ValidationResponseEncoder(JSONEncoder):
         return validation_response.get_attributes()
 
 
+def clear_validations():
+    """
+    Clear validations
+    """
+    VALIDATIONS.clear()
+
+
 def load_validations():
     """
     Load validations from application path

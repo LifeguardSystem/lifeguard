@@ -2,12 +2,12 @@ import time
 import traceback
 
 from os import walk
-from os.path import getmtime, join
+from os.path import getmtime, join, exists
 
 import schedule
 
 from lifeguard.logger import lifeguard_logger as logger
-from lifeguard.validations import VALIDATIONS, load_validations
+from lifeguard.validations import VALIDATIONS, load_validations, clear_validations
 from lifeguard.settings import LIFEGUARD_DIRECTORY
 
 VALID_TIME_PERIODS = [
@@ -90,6 +90,7 @@ def __load_validations_files():
 
 def check_if_should_reload():
     changed = False
+    # check new files or changed files
     for root, _dirs, files in walk(join(LIFEGUARD_DIRECTORY, "validations")):
         for file in files:
             if file.endswith(".yaml"):
@@ -104,6 +105,12 @@ def check_if_should_reload():
                         logger.info("file changed %s", file_path)
                         WATCHED_FILES[file_path] = last_modified
                         changed = True
+    # check removed files
+    for file_path in list(WATCHED_FILES.keys()):
+        if not exists(file_path):
+            logger.info("file removed %s", file_path)
+            del WATCHED_FILES[file_path]
+            changed = True
 
     if changed:
         reload_scheduler()
@@ -119,6 +126,7 @@ def __clear_validations_jobs():
 
 def reload_scheduler():
     __clear_validations_jobs()
+    clear_validations()
     load_validations()
     configure_validations()
 
