@@ -12,6 +12,7 @@ class LifeguardContext:
         self._users = []
         self._auth_method = None
         self._only_settings = False
+        self._cors_settings = None
         self._alert_email_template = """From: [[SMTP_USER]]
 To: [[RECEIVERS]]
 MIME-Version: 1.0
@@ -85,6 +86,20 @@ Subject: [[SUBJECT]]
         Setter for users
         """
         self._users = value
+
+    @property
+    def cors_settings(self):
+        """
+        Getter for cors settings
+        """
+        return self._cors_settings
+
+    @cors_settings.setter
+    def cors_settings(self, value):
+        """
+        Setter for cors settings
+        """
+        self._cors_settings = value
 
     def valid_user(self, username, password):
         """

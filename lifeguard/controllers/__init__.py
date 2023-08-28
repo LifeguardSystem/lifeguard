@@ -203,15 +203,12 @@ def login_required(function):
 
 
 def register_custom_controller(path, function, options):
-    endpoint = options.pop("endpoint", function.__name__)
     skip_login = options.pop("skip_login", False)
 
     if not skip_login:
         function = login_required(function)
 
-    custom_controllers.add_url_rule(
-        path, endpoint, configure_controller(function), **options
-    )
+    custom_controllers.route(path, **options)(function)
 
 
 def load_custom_controllers():

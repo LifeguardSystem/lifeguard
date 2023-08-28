@@ -3,6 +3,7 @@ import traceback
 from datetime import datetime, timedelta
 
 from flask import Flask, make_response
+from flask_cors import CORS
 
 from lifeguard import NORMAL, change_status
 from lifeguard.controllers import custom_controllers, login_required, request
@@ -43,6 +44,17 @@ def build_global_status(complete=False):
             extra={"traceback": traceback.format_exc()},
         )
         return make_json_response(json.dumps({"error": traceback.format_exc()}))
+
+
+def enable_cors(cors_configuration):
+    """
+    Enable cors
+    """
+    CORS(APP, resources=cors_configuration)
+
+
+def register_custom_controller():
+    APP.register_blueprint(custom_controllers)
 
 
 @APP.route("/lifeguard/status", methods=["GET"])
@@ -89,6 +101,3 @@ def execute_validation(validation):
             extra={"traceback": traceback.format_exc()},
         )
         return json.dumps({"error": traceback.format_exc()})
-
-
-APP.register_blueprint(custom_controllers)

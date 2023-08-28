@@ -34,10 +34,8 @@ class TestControllers(unittest.TestCase):
         mock_logger.info.assert_any_call(
             "loading custom controller %s", "subdir_controller"
         )
-        mock_custom_controllers.add_url_rule.assert_any_call("/hello", "hello", ANY)
-        mock_custom_controllers.add_url_rule.assert_called_with(
-            "/subdir", "subdir", ANY
-        )
+        mock_custom_controllers.route.assert_any_call("/hello")
+        mock_custom_controllers.route.assert_called_with("/subdir")
 
     @patch("lifeguard.controllers.FlaskResponse")
     @patch("lifeguard.controllers.build_content_from_template")
@@ -305,9 +303,8 @@ class TestControllers(unittest.TestCase):
         register_custom_controller(
             "/login", login_function, {"method": ["GET"], "skip_login": True}
         )
-        mock_custom_controllers.add_url_rule.assert_called_with(
-            "/login", "login_function", ANY, method=["GET"]
-        )
+        mock_custom_controllers.route.assert_called_with("/login", method=["GET"])
+        mock_custom_controllers.route.return_value.assert_called_with(login_function)
         mock_login_required.assert_not_called()
 
     @patch("lifeguard.controllers.login_required")
@@ -319,7 +316,9 @@ class TestControllers(unittest.TestCase):
         register_custom_controller(
             "/login", login_function, {"method": ["GET"], "skip_login": False}
         )
-        mock_custom_controllers.add_url_rule.assert_called_with(
-            "/login", "login_function", ANY, method=["GET"]
+
+        mock_custom_controllers.route.assert_called_with("/login", method=["GET"])
+        mock_custom_controllers.route.return_value.assert_called_with(
+            mock_login_required.return_value
         )
-        mock_login_required.assert_called()
+        mock_login_required.assert_called_with(login_function)

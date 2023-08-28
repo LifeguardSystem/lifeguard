@@ -13,6 +13,7 @@ from lifeguard.settings import (
 )
 from lifeguard.controllers import load_custom_controllers
 from lifeguard.controllers.assets import load_assets_controllers
+from lifeguard.server import enable_cors, register_custom_controller
 from lifeguard.validations import load_validations
 
 
@@ -54,3 +55,8 @@ def setup(lifeguard_context):
     load_validations()
 
     lifeguard_settings.setup(lifeguard_context)
+
+    if lifeguard_context.cors_settings:
+        enable_cors(lifeguard_context.cors_settings)
+
+    register_custom_controller()
