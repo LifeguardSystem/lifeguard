@@ -204,13 +204,21 @@ def load_validations():
 
 
 def validation(
-    description=None, actions=None, schedule=None, settings=None, actions_on_error=None
+    description=None,
+    actions=None,
+    schedule=None,
+    settings=None,
+    actions_on_error=None,
+    group=None,
 ):
     """
     Decorator to configure a validation
     """
     if not settings:
         settings = {}
+
+    if not group:
+        group = "default"
 
     def function_reference(decorated):
         @wraps(decorated)
@@ -265,6 +273,7 @@ def validation(
 
         VALIDATIONS[decorated.__name__] = {
             "ref": wrapped,
+            "group": group,
             "description": description,
             "actions": actions,
             "schedule": schedule,

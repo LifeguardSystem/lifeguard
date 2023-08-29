@@ -49,9 +49,11 @@ def render_template(template, data=None, headers=None, searchpath=None):
     return response
 
 
-def send_status(status):
+def send_status(status, data=None, content_type="text/html"):
     response = Response()
     response.status = status
+    response.data = data
+    response.content_type = content_type
     return response
 
 
@@ -204,6 +206,7 @@ def login_required(function):
 
 def register_custom_controller(path, function, options):
     skip_login = options.pop("skip_login", False)
+    function = configure_controller(function)
 
     if not skip_login:
         function = login_required(function)
@@ -259,18 +262,11 @@ def treat_response(response):
 def configure_controller(function):
     @wraps(function)
     def wrapped(*args, **kwargs):
-        try:
-            response = function(*args, **kwargs)
+        response = function(*args, **kwargs)
 
-            if isinstance(response, Response):
-                return treat_response(response)
-            return response
-        except Exception as error:
-            logger.error(
-                "error on render dashboard index: %s",
-                str(error),
-                extra={"traceback": traceback.format_exc()},
-            )
+        if isinstance(response, Response):
+            return treat_response(response)
+        return response
 
     return wrapped
 

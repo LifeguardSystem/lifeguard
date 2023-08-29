@@ -13,6 +13,7 @@ from lifeguard.settings import (
 )
 from lifeguard.controllers import load_custom_controllers
 from lifeguard.controllers.assets import load_assets_controllers
+from lifeguard.controllers.groups import load_groups_controllers
 from lifeguard.server import enable_cors, register_custom_controller
 from lifeguard.validations import load_validations
 
@@ -48,6 +49,7 @@ def setup(lifeguard_context):
             plugin.init(lifeguard_context)
 
     load_custom_controllers()
+    load_groups_controllers()
 
     if LIFEGUARD_CONTROLLERS_ASSETS_ENABLED:
         load_assets_controllers()
