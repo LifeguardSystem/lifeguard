@@ -49,10 +49,10 @@ def render_template(template, data=None, headers=None, searchpath=None):
     return response
 
 
-def send_status(status, data=None, content_type="text/html"):
+def send_status(status, content=None, content_type="text/html"):
     response = Response()
     response.status = status
-    response.data = data
+    response.content = content
     response.content_type = content_type
     return response
 

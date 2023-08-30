@@ -34,41 +34,6 @@ def groups_controller(group):
             content_type="application/json",
         )
 
-    return {
-        "groupName": "Abelinhas",
-        "groupID": "bees",
-        "monitors": [
-            {
-                "name": "Checando filas de processamento do Abelinhas",
-                "id": "queues_validation",
-                "status": "normal",
-                "description": "As filas de processamento do Abelinhas são parte fundamental do sistema, elas são responsáveis para gerar os valores apresentados em tela e também processar os arquivos. Por isso é de extrema importancia as elas estejam funcionando corretamente. Essa validação fica monitorando as filas e se caso as filas não estejam com a vazão correta, uma alerta será disparado.",
-                "content": {
-                    "queue": [
-                        {
-                            "description": "bees:consolidation_spreadsheet_entries_queue",
-                            "value": 92029,
-                        },
-                        {
-                            "description": "bees:consolidation_entries_queue",
-                            "value": 2892,
-                        },
-                        {
-                            "description": "bees:spreadsheets_queue",
-                            "value": 110,
-                        },
-                    ],
-                    "action": [
-                        {
-                            "description": "Ver detalhes das filas",
-                            "linkTo": "https://google.com.br/",
-                        },
-                    ],
-                },
-            }
-        ],
-    }
-
 
 def load_groups_controllers():
     register_custom_controller(

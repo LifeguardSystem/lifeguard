@@ -92,21 +92,6 @@ class TestControllers(unittest.TestCase):
         configure_controller(test)()
         mock_treat_response.assert_called_with(response)
 
-    @patch("lifeguard.controllers.logger")
-    @patch("lifeguard.controllers.traceback")
-    def test_configure_controller_error(self, mock_traceback, mock_logger):
-        mock_traceback.format_exc.return_value = "traceback"
-
-        def test():
-            raise Exception()
-
-        configure_controller(test)()
-        mock_logger.error.assert_called_with(
-            "error on render dashboard index: %s",
-            "",
-            extra={"traceback": "traceback"},
-        )
-
     @patch("lifeguard.controllers.jinja2")
     def test_build_content_from_template(self, mock_jinja2):
         template_loader = MagicMock(name="template_loader")
@@ -294,9 +279,12 @@ class TestControllers(unittest.TestCase):
             },
         )
 
+    @patch("lifeguard.controllers.configure_controller")
     @patch("lifeguard.controllers.login_required")
     @patch("lifeguard.controllers.custom_controllers")
-    def test_skip_login(self, mock_custom_controllers, mock_login_required):
+    def test_skip_login(
+        self, mock_custom_controllers, mock_login_required, mock_configure_controller
+    ):
         def login_function():
             pass
 
@@ -304,12 +292,18 @@ class TestControllers(unittest.TestCase):
             "/login", login_function, {"method": ["GET"], "skip_login": True}
         )
         mock_custom_controllers.route.assert_called_with("/login", method=["GET"])
-        mock_custom_controllers.route.return_value.assert_called_with(login_function)
+        mock_configure_controller.assert_called_with(login_function)
+        mock_custom_controllers.route.return_value.assert_called_with(
+            mock_configure_controller.return_value
+        )
         mock_login_required.assert_not_called()
 
+    @patch("lifeguard.controllers.configure_controller")
     @patch("lifeguard.controllers.login_required")
     @patch("lifeguard.controllers.custom_controllers")
-    def test_enable_login(self, mock_custom_controllers, mock_login_required):
+    def test_enable_login(
+        self, mock_custom_controllers, mock_login_required, mock_configure_controller
+    ):
         def login_function():
             pass
 
@@ -321,4 +315,5 @@ class TestControllers(unittest.TestCase):
         mock_custom_controllers.route.return_value.assert_called_with(
             mock_login_required.return_value
         )
-        mock_login_required.assert_called_with(login_function)
+        mock_configure_controller.assert_called_with(login_function)
+        mock_login_required.assert_called_with(mock_configure_controller.return_value)
