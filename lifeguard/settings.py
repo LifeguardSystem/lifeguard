@@ -158,7 +158,7 @@ SETTINGS_MANAGER = SettingsManager(
         "LIFEGUARD_SERVER_NUMBER_OF_WORKS": {
             "default": "{}".format((multiprocessing.cpu_count() * 2) + 1),
             "type": "int",
-            "description": "Append all notifications to history",
+            "description": "Set number of works in server",
         },
         "PERMANENT_SESSION_LIFETIME": {
             "default": "2678400",
