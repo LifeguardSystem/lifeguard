@@ -2,7 +2,6 @@
 import argparse
 import _thread
 import sys
-import multiprocessing
 import gunicorn.app.base
 from tabulate import tabulate
 
@@ -12,7 +11,12 @@ from lifeguard import setup
 from lifeguard.bootstrap import generate_base_project
 from lifeguard.context import LIFEGUARD_CONTEXT
 from lifeguard.scheduler import start_scheduler
-from lifeguard.settings import LIFEGUARD_SERVER_PORT, SETTINGS_MANAGER, SettingsManager
+from lifeguard.settings import (
+    LIFEGUARD_SERVER_PORT,
+    LIFEGUARD_SERVER_NUMBER_OF_WORKS,
+    SETTINGS_MANAGER,
+    SettingsManager,
+)
 
 
 def display_settings():
@@ -26,10 +30,6 @@ def display_settings():
         data["Value"].append(settings_manager.read_value(entry))
 
     print(tabulate(data, headers="keys"))
-
-
-def number_of_workers():
-    return (multiprocessing.cpu_count() * 2) + 1
 
 
 # Scheduler
@@ -61,7 +61,6 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "-d", "--settings", help="display all plugins settings", action="store_true"
@@ -109,6 +108,6 @@ if __name__ == "__main__":
             APP,
             {
                 "bind": "{}:{}".format("0.0.0.0", LIFEGUARD_SERVER_PORT),
-                "workers": number_of_workers(),
+                "workers": LIFEGUARD_SERVER_NUMBER_OF_WORKS,
             },
         ).run()

@@ -2,6 +2,7 @@
 Lifeguard core settings
 """
 import re
+import multiprocessing
 from os import environ
 
 
@@ -154,6 +155,11 @@ SETTINGS_MANAGER = SettingsManager(
             "type": "bool",
             "description": "Append all notifications to history",
         },
+        "LIFEGUARD_SERVER_NUMBER_OF_WORKS": {
+            "default": "{}".format((multiprocessing.cpu_count() * 2) + 1),
+            "type": "int",
+            "description": "Append all notifications to history",
+        },
         "PERMANENT_SESSION_LIFETIME": {
             "default": "2678400",
             "type": "int",
@@ -163,6 +169,10 @@ SETTINGS_MANAGER = SettingsManager(
 )
 
 LIFEGUARD_SERVER_PORT = SETTINGS_MANAGER.read_value("LIFEGUARD_SERVER_PORT")
+LIFEGUARD_SERVER_NUMBER_OF_WORKS = SETTINGS_MANAGER.read_value(
+    "LIFEGUARD_SERVER_NUMBER_OF_WORKS"
+)
+
 LIFEGUARD_DIRECTORY = SETTINGS_MANAGER.read_value("LIFEGUARD_DIRECTORY")
 LIFEGUARD_PUBLIC_ADDRESS = SETTINGS_MANAGER.read_value("LIFEGUARD_PUBLIC_ADDRESS")
 LIFEGUARD_EMAIL_SMTP_USER = SETTINGS_MANAGER.read_value("LIFEGUARD_EMAIL_SMTP_USER")
